@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xican | Elite Arsenal</title>
+    
+    <!-- Meta etiquetas para Dominio Personalizado -->
+    <meta name="description" content="Abre cajas y colecciona las skins más exclusivas en Xican Elite Arsenal.">
+    <link rel="canonical" href="https://tu-dominio-aqui.com/" />
+    
+    <!-- Open Graph (Redes Sociales) -->
+    <meta property="og:title" content="Xican | Elite Arsenal">
+    <meta property="og:description" content="Tu arsenal, tu estilo. La mejor ruleta de skins.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tu-dominio-aqui.com/">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
@@ -27,6 +38,41 @@
             background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
             pointer-events: none;
             z-index: -1;
+        }
+
+        /* --- Animaciones de Interfaz --- */
+        #rewardPopover {
+            display: none;
+            opacity: 0;
+            transform: translateY(10px) scale(0.95);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+
+        #rewardPopover.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .bell-btn {
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .bell-btn:active {
+            transform: scale(0.85);
+        }
+
+        .bell-notif {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ef4444;
         }
 
         /* --- Showcase Infinito --- */
@@ -81,10 +127,6 @@
             transition: opacity 0.3s ease;
         }
 
-        .showcase-item:hover .skin-bg-glow {
-            opacity: 0.4;
-        }
-
         /* --- Ruleta de Apertura --- */
         #roulette-overlay {
             position: fixed;
@@ -100,14 +142,15 @@
         .roulette-viewport {
             width: 100%;
             max-width: 1000px;
-            height: 300px;
+            height: 350px;
             position: relative;
-            background: rgba(255,255,255,0.03);
-            border-top: 2px solid rgba(255,255,255,0.05);
-            border-bottom: 2px solid rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.02);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
             overflow: hidden;
             display: flex;
             align-items: center;
+            mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
         }
 
         .roulette-track {
@@ -120,14 +163,16 @@
         }
 
         .knife-card {
-            min-width: 220px;
-            height: 220px;
+            min-width: 200px;
+            height: 200px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            border-right: 1px solid rgba(255,255,255,0.05);
-            transition: transform 0.2s ease-out;
+            margin: 0 10px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
         }
 
         .center-indicator {
@@ -136,47 +181,38 @@
             transform: translateX(-50%);
             top: 0;
             bottom: 0;
-            width: 3px;
+            width: 2px;
             background: #facc15;
-            z-index: 50;
-            box-shadow: 0 0 20px #facc15;
+            z-index: 100;
+            box-shadow: 0 0 15px #facc15;
         }
 
-        /* --- UI Components --- */
-        #rewardPopover {
-            position: absolute;
-            top: 80px;
-            right: 24px;
-            width: 320px;
-            background: #111;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            display: none;
-            z-index: 200;
-        }
-
-        .bell-notif {
-            position: absolute;
-            top: -2px;
-            right: -2px;
-            width: 10px;
-            height: 10px;
-            background: #ef4444;
-            border-radius: 50%;
-            border: 2px solid #050505;
-        }
-
+        /* --- Ganador Modal & Transiciones --- */
         #winnerModal.active .winner-content {
-            transform: scale(1);
+            transform: scale(1) translateY(0) rotateX(0deg);
             opacity: 1;
         }
 
         .winner-content {
-            transform: scale(0.9);
+            transform: scale(0.6) translateY(100px) rotateX(-20deg);
             opacity: 0;
-            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+            background: #0a0a0a;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 50px 100px rgba(0,0,0,0.9);
+        }
+
+        .winner-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            filter: blur(100px);
+            opacity: 0.4;
+            z-index: 0;
+            border-radius: 50%;
         }
 
         #inventoryOverlay {
@@ -193,14 +229,6 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 20px;
-        }
-
-        .inventory-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 20px;
-            padding: 20px;
-            text-align: center;
         }
 
         .btn-action {
@@ -226,11 +254,12 @@
         <div class="flex gap-4 items-center">
             <button onclick="openInventory()" class="btn-action">Inventario</button>
             <div class="relative">
-                <button onclick="toggleRewardPopover()" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all">
+                <button onclick="toggleRewardPopover()" class="bell-btn w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all relative">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
                     <div class="bell-notif" id="bellNotif"></div>
                 </button>
-                <div id="rewardPopover">
+                
+                <div id="rewardPopover" class="absolute top-14 right-0 w-80 bg-[#111] border border-white/10 p-5 rounded-3xl shadow-2xl z-[200]">
                     <h3 class="text-[10px] font-black uppercase text-white/30 mb-4 tracking-widest">Recompensa Disponible</h3>
                     <div class="bg-white/5 border border-white/10 p-4 rounded-2xl flex items-center gap-4">
                         <img src="https://community.skin.club/wp-content/uploads/2024/11/Prisma-Case_LR.webp" class="w-16 drop-shadow-lg">
@@ -255,20 +284,6 @@
                 </div>
                 <img src="https://static.totalcsgo.com/totalcsgo-strapi/small_skin_6cf3681943576b124a145392d63c91024d3f1926_369f9a5b45.png" class="absolute -right-10 -bottom-10 w-96 opacity-30 rotate-12 pointer-events-none">
             </div>
-            <div class="grid grid-cols-3 gap-6 mb-12">
-                <div class="bg-white/5 p-8 rounded-3xl border border-white/5">
-                    <p class="text-[10px] font-bold text-white/30 uppercase mb-2">Premios Entregados</p>
-                    <p class="text-3xl font-black">+14,200</p>
-                </div>
-                <div class="bg-white/5 p-8 rounded-3xl border border-white/5">
-                    <p class="text-[10px] font-bold text-white/30 uppercase mb-2">Sistema Seguro</p>
-                    <p class="text-xl font-bold text-green-400 italic">Encriptación AES-256</p>
-                </div>
-                <div class="bg-white/5 p-8 rounded-3xl border border-blue-500/20 bg-blue-500/5">
-                    <p class="text-[10px] font-bold text-blue-400 uppercase mb-2">Comunidad</p>
-                    <p class="text-xl font-bold">+50k Usuarios</p>
-                </div>
-            </div>
         </div>
         <div class="showcase-container">
             <div class="showcase-track" id="showcaseTrack"></div>
@@ -276,20 +291,32 @@
     </div>
 
     <div id="roulette-overlay">
-        <div id="roulette-header" class="mb-12 text-center transition-opacity duration-500">
-            <h2 class="text-[10px] font-black tracking-[1em] text-white/30 uppercase mb-2">Sorteo en Progreso</h2>
-            <p class="text-2xl font-black italic uppercase">Buscando tu Skin...</p>
+        <div id="roulette-header" class="mb-12 text-center transition-all duration-700">
+            <h2 class="text-[10px] font-black tracking-[1em] text-white/30 uppercase mb-2">Desbloqueando Item</h2>
+            <p class="text-2xl font-black italic uppercase tracking-widest">Girando...</p>
         </div>
+        
         <div id="roulette-main" class="roulette-viewport transition-all duration-700">
             <div class="center-indicator"></div>
             <div id="track" class="roulette-track"></div>
         </div>
+        
+        <!-- Modal Ganador -->
         <div id="winnerModal" class="fixed inset-0 bg-black/95 z-[600] hidden flex items-center justify-center p-6">
-            <div class="winner-content bg-[#0f0f0f] border border-white/10 p-12 rounded-[40px] text-center max-w-md w-full shadow-[0_0_100px_rgba(255,255,255,0.05)]">
-                <div id="winnerIcon" class="mb-8 scale-110"></div>
-                <h3 id="knifeName" class="text-4xl font-black italic uppercase tracking-tighter mb-2">---</h3>
-                <p id="rarityText" class="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-12">---</p>
-                <button onclick="saveAndRestart()" class="w-full bg-white text-black py-5 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-white/90 active:scale-95 transition-all">Guardar en Inventario</button>
+            <div class="winner-content rounded-[50px] text-center max-w-md w-full p-12 relative overflow-hidden">
+                <div id="dynamicGlow" class="winner-glow"></div>
+                <div class="relative z-20">
+                    <div id="winnerIcon" class="mb-10 scale-125 transition-transform duration-1000"></div>
+                    <h3 id="knifeName" class="text-4xl font-black italic uppercase tracking-tighter mb-2">---</h3>
+                    <p id="rarityText" class="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-12">---</p>
+                    
+                    <div class="flex flex-col gap-3">
+                        <!-- Botón principal para guardar -->
+                        <button onclick="saveAndRestart()" class="w-full bg-white text-black py-5 rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-[1.02] active:scale-95 transition-all">Equipar en Arsenal</button>
+                        <!-- Botón para descartar/volver -->
+                        <button onclick="goHome()" class="w-full bg-white/5 border border-white/10 text-white/60 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-white/10 transition-all">Volver al Inicio</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -315,16 +342,14 @@
             { name: "Karambit | Lore", img: "https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FAZ3w8zYYzRM-M-ihoWKmsj5Nr_Yg2Yf6p0n2OzCpIql3gbt-kJlZGnzJ4XAIFM4ZQ7V8wK2yO68g5Pu7pvNzmwj5HeziYMobA", color: "#ffb400", label: "LEGENDARIO" },
             { name: "AK-47 | Empress", img: "https://cdn.sanity.io/images/6znhzi10/production/85be84ba7c07917493b8e8a66c9d95c928ebe8b6-512x384.png?w=768&auto=format", color: "#f59e0b", label: "ESPECIAL" },
             { name: "USP-S | Printstream", img: "https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_usp_silencer_cu_usp_printstream_light_large.9f5bcd4f94db3d965b3b2e7c3aace470e9466380.png", color: "#ffffff", label: "EXCLUSIVO" },
-            { name: "Agente | Dragomir", img: "https://static.totalcsgo.com/totalcsgo-strapi/small_agent_4727_aaaca867b0.png", color: "#3b82f6", label: "AGENTE" },
             { name: "M4A4 | Howl", img: "https://static.totalcsgo.com/totalcsgo-strapi/small_skin_6cf3681943576b124a145392d63c91024d3f1926_369f9a5b45.png", color: "#ef4444", label: "CONTRABANDO" },
-            { name: "Glock-18 | Fade", img: "https://cdn.sanity.io/images/6znhzi10/production/fe01fa79951854eb6e0591eac4b3a72aa76ddc41-512x384.png?w=768&auto=format", color: "#ec4899", label: "ÉPICO" },
-            { name: "AWP | CMYK", img: "https://csspot.org/_next/image/?url=https%3A%2F%2Fcsspot.org%2Fuploads%2Fawp_cmyk_c27ef5457c.png&w=1080&q=75", color: "#06b6d4", label: "COVERT" }
+            { name: "Glock-18 | Fade", img: "https://cdn.sanity.io/images/6znhzi10/production/fe01fa79951854eb6e0591eac4b3a72aa76ddc41-512x384.png?w=768&auto=format", color: "#ec4899", label: "ÉPICO" }
         ];
 
+        // Cargar inventario desde localStorage al inicio
         let inventory = JSON.parse(localStorage.getItem('xican_inventory')) || [];
-        let currentWinner = null;
         let isSpinning = false;
-        let spinAudioPromise = null;
+        let lastWinner = null;
 
         function initShowcase() {
             const track = document.getElementById('showcaseTrack');
@@ -335,33 +360,42 @@
                     <div class="skin-bg-glow" style="background: ${s.color}"></div>
                     <img src="${s.img}" class="w-32 z-10 drop-shadow-[0_15px_25px_rgba(0,0,0,0.4)]">
                     <p class="text-[8px] font-black mt-3 z-10" style="color:${s.color}">${s.name}</p>
-                    <div class="h-[2px] w-8 mt-1 rounded-full opacity-50" style="background:${s.color}"></div>
                 `;
                 track.appendChild(item);
             });
         }
 
         function toggleRewardPopover() {
-            const popover = document.getElementById('rewardPopover');
-            popover.style.display = popover.style.display === 'block' ? 'none' : 'block';
+            const p = document.getElementById('rewardPopover');
+            if (p.classList.contains('show')) {
+                p.classList.remove('show');
+                setTimeout(() => p.style.display = 'none', 400);
+            } else {
+                p.style.display = 'block';
+                requestAnimationFrame(() => p.classList.add('show'));
+            }
         }
 
         function claimReward() {
-            document.getElementById('rewardPopover').style.display = 'none';
-            document.getElementById('bellNotif').style.display = 'none';
-            document.getElementById('roulette-overlay').style.display = 'flex';
-            buildRouletteTrack();
-            setTimeout(startSpin, 500);
+            const p = document.getElementById('rewardPopover');
+            p.classList.remove('show');
+            setTimeout(() => {
+                p.style.display = 'none';
+                document.getElementById('bellNotif').style.display = 'none';
+                document.getElementById('roulette-overlay').style.display = 'flex';
+                buildRouletteTrack();
+                setTimeout(startSpin, 800);
+            }, 400);
         }
 
         function buildRouletteTrack() {
             const t = document.getElementById('track');
             t.innerHTML = '';
-            for (let i = 0; i < 80; i++) {
+            for (let i = 0; i < 90; i++) {
                 const s = skins[i % skins.length];
                 const card = document.createElement('div');
                 card.className = 'knife-card';
-                card.innerHTML = `<img src="${s.img}" class="w-32 h-24 object-contain opacity-80"><div class="h-1 w-20 mt-4" style="background:${s.color}"></div>`;
+                card.innerHTML = `<img src="${s.img}" class="w-28 h-28 object-contain">`;
                 t.appendChild(card);
             }
         }
@@ -372,115 +406,134 @@
             
             const track = document.getElementById('track');
             const audio = document.getElementById('spinSound');
-            
-            // Gestión segura de la promesa de audio para evitar el error de interrupción
-            try {
-                spinAudioPromise = audio.play();
-            } catch (err) {
-                console.warn("Audio play failed:", err);
-            }
+            try { audio.play(); } catch(e){}
 
-            const cardWidth = 220;
-            const winIdx = 65 + Math.floor(Math.random() * 8);
-            const finalTargetPos = (winIdx * cardWidth) - (window.innerWidth / 2) + (cardWidth / 2);
+            const cardWidth = 220; 
+            const winningIndex = 75 + Math.floor(Math.random() * 5);
+            const targetPos = (winningIndex * cardWidth) - (window.innerWidth / 2) + (cardWidth / 2);
             
-            let currentPos = 0;
             let startTime = null;
-            const duration = 7000;
+            const duration = 7500;
 
-            function easeOut(t) { return 1 - (--t) * t * t * t; }
+            function easeOutExpo(t) { return t === 1 ? 1 : 1 - Math.pow(2, -10 * t); }
 
             function animate(timestamp) {
                 if (!startTime) startTime = timestamp;
                 let progress = (timestamp - startTime) / duration;
                 if (progress > 1) progress = 1;
 
-                const easedProgress = easeOut(progress);
-                currentPos = easedProgress * finalTargetPos;
-                
-                track.style.transform = `translateX(-${currentPos}px)`;
+                const eased = easeOutExpo(progress);
+                const currentX = eased * targetPos;
+                track.style.transform = `translateX(-${currentX}px)`;
 
                 const cards = track.querySelectorAll('.knife-card');
-                const viewportCenter = window.innerWidth / 2;
+                const centerX = window.innerWidth / 2;
 
                 cards.forEach(card => {
                     const rect = card.getBoundingClientRect();
                     const cardCenter = rect.left + rect.width / 2;
-                    const distanceFromCenter = Math.abs(viewportCenter - cardCenter);
-                    
-                    if (distanceFromCenter < 150) {
-                        const scale = 1 + (0.25 * (1 - distanceFromCenter / 150));
+                    const dist = Math.abs(centerX - cardCenter);
+                    if (dist < 150) {
+                        const scale = 1 + (0.25 * (1 - dist / 150));
                         card.style.transform = `scale(${scale})`;
-                        card.querySelector('img').style.opacity = '1';
+                        card.style.opacity = "1";
                     } else {
                         card.style.transform = `scale(1)`;
-                        card.querySelector('img').style.opacity = '0.6';
+                        card.style.opacity = "0.4";
                     }
                 });
 
                 if (progress < 1) {
                     requestAnimationFrame(animate);
                 } else {
-                    finishSpin(winIdx);
+                    lastWinner = skins[winningIndex % skins.length];
+                    triggerWinnerSequence(lastWinner);
                 }
             }
-
             requestAnimationFrame(animate);
         }
 
-        async function finishSpin(winIdx) {
+        function triggerWinnerSequence(winner) {
             isSpinning = false;
+            document.getElementById('spinSound').pause();
             
-            // Pausa segura del audio esperando a que la promesa de play se resuelva
-            if (spinAudioPromise) {
-                try {
-                    await spinAudioPromise;
-                    const audio = document.getElementById('spinSound');
-                    audio.pause();
-                    audio.currentTime = 0;
-                } catch (err) {
-                    // Ignorar errores si el play fue cancelado o falló
-                }
-                spinAudioPromise = null;
-            }
-
-            currentWinner = skins[winIdx % skins.length];
-            handleWinSequence();
-        }
-
-        function handleWinSequence() {
-            const rouletteMain = document.getElementById('roulette-main');
-            const header = document.getElementById('roulette-header');
-            rouletteMain.style.opacity = '0';
-            rouletteMain.style.transform = 'scale(0.95)';
-            header.style.opacity = '0';
+            triggerConfetti(winner.color);
 
             setTimeout(() => {
-                const duration = 3000;
-                const end = Date.now() + duration;
-                (function frame() {
-                    confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 } });
-                    confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 } });
-                    if (Date.now() < end) requestAnimationFrame(frame);
-                }());
-                showWinner();
-            }, 600);
+                document.getElementById('roulette-main').style.opacity = '0';
+                document.getElementById('roulette-header').style.opacity = '0';
+                
+                setTimeout(() => {
+                    showWinnerModal(winner);
+                }, 600);
+            }, 800);
         }
 
-        function showWinner() {
+        function showWinnerModal(item) {
             const modal = document.getElementById('winnerModal');
-            document.getElementById('knifeName').textContent = currentWinner.name;
-            document.getElementById('knifeName').style.color = currentWinner.color;
-            document.getElementById('rarityText').textContent = `Grado: ${currentWinner.label}`;
-            document.getElementById('winnerIcon').innerHTML = `<img src="${currentWinner.img}" class="w-64 mx-auto drop-shadow-[0_0_60px_${currentWinner.color}]">`;
+            document.getElementById('knifeName').textContent = item.name;
+            document.getElementById('knifeName').style.color = item.color;
+            document.getElementById('rarityText').textContent = `Rareza: ${item.label}`;
+            document.getElementById('winnerIcon').innerHTML = `<img src="${item.img}" class="w-72 mx-auto drop-shadow-[0_25px_50px_${item.color}66]">`;
+            document.getElementById('dynamicGlow').style.background = item.color;
+            
             modal.classList.remove('hidden');
-            setTimeout(() => modal.classList.add('active'), 10);
+            setTimeout(() => {
+                modal.classList.add('active');
+                triggerConfetti(item.color);
+            }, 50);
         }
 
+        function triggerConfetti(color) {
+            const duration = 2.5 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000, colors: [color, '#ffffff'] };
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+
+                const particleCount = 40 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { 
+                    particleCount, 
+                    origin: { x: Math.random(), y: Math.random() - 0.2 } 
+                }));
+            }, 200);
+        }
+
+        /**
+         * Guarda el objeto actual en el inventario de localStorage y recarga la interfaz
+         */
         function saveAndRestart() {
-            inventory.push({ ...currentWinner, id: Date.now() });
-            localStorage.setItem('xican_inventory', JSON.stringify(inventory));
-            location.reload();
+            if (lastWinner) {
+                // Crear copia del objeto ganado para el inventario
+                const inventoryItem = {
+                    ...lastWinner,
+                    id: Date.now(), // ID único para evitar conflictos si gana la misma skin dos veces
+                    dateAcquired: new Date().toISOString()
+                };
+                
+                // Añadir al arreglo global
+                inventory.push(inventoryItem);
+                
+                // Guardar en el almacenamiento local del navegador
+                localStorage.setItem('xican_inventory', JSON.stringify(inventory));
+                
+                // Retroalimentación visual opcional antes de recargar
+                console.log("Skin equipada:", inventoryItem.name);
+                
+                // Recargar para limpiar la ruleta y volver al inicio
+                location.reload();
+            }
+        }
+
+        function goHome() {
+            const modal = document.getElementById('winnerModal');
+            modal.classList.remove('active');
+            
+            setTimeout(() => {
+                location.reload(); 
+            }, 500);
         }
 
         function openInventory() {
@@ -495,29 +548,29 @@
         function renderInventory() {
             const grid = document.getElementById('inventoryGrid');
             grid.innerHTML = '';
-            document.getElementById('inventoryCount').textContent = `${inventory.length} Skins Coleccionadas`;
+            
+            // Refrescar conteo
+            document.getElementById('inventoryCount').textContent = `${inventory.length} Objetos en Arsenal`;
+            
             if (inventory.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-20 text-center text-white/10 uppercase font-black">Inventario Vacío</div>`;
+                grid.innerHTML = '<div class="col-span-full text-center py-20 text-white/20 uppercase font-black tracking-widest text-xs">Tu arsenal está vacío</div>';
                 return;
             }
+
             inventory.forEach(item => {
                 const card = document.createElement('div');
-                card.className = 'inventory-card';
+                card.className = 'bg-white/5 p-6 rounded-3xl border border-white/10 text-center hover:bg-white/10 transition-all cursor-default';
                 card.innerHTML = `
-                    <div class="h-1 w-12 mx-auto mb-4" style="background:${item.color}"></div>
-                    <img src="${item.img}" class="w-full h-24 object-contain mb-4">
-                    <p class="text-[10px] font-black uppercase">${item.name}</p>
-                    <p class="text-[8px] font-bold mt-1" style="color:${item.color}">${item.label}</p>
+                    <img src="${item.img}" class="w-full h-24 object-contain mb-4 drop-shadow-lg">
+                    <p class="text-[9px] font-black uppercase mb-1" style="color:${item.color}">${item.name}</p>
+                    <p class="text-[7px] text-white/30 font-bold uppercase tracking-widest">${item.label}</p>
                 `;
                 grid.appendChild(card);
             });
         }
 
         window.onload = initShowcase;
-        window.onclick = function(e) {
-            const popover = document.getElementById('rewardPopover');
-            if (popover && !e.target.closest('.relative') && popover.style.display === 'block') popover.style.display = 'none';
-        }
     </script>
 </body>
 </html>
+
