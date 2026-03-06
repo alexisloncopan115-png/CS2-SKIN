@@ -3,16 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKIN.LAN | Mercado de Skins VIP</title>
+    <title>SKIN.LAN | Casino VIP & Skins</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Black+Ops+One&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
-    <!-- Librería para el efecto de confeti -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Black+Ops+One&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
+        :root {
+            --gold-primary: #ffd700;
+            --gold-secondary: #b8860b;
+            --casino-dark: #07070c;
+            --casino-card: #12121f;
+        }
+
         body {
-            background-color: #0d0d14;
+            background-color: var(--casino-dark);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(255, 215, 0, 0.05) 0%, transparent 70%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l15 30-15 30L15 30z' fill='%23ffd700' fill-opacity='0.02' fill-rule='evenodd'/%3E%3C/svg%3E");
             color: #ffffff;
             font-family: 'Inter', sans-serif;
             margin: 0;
@@ -30,57 +39,73 @@
             flex: 1;
             overflow-y: auto;
             scrollbar-gutter: stable;
+            position: relative;
         }
 
+        /* Estilos de Transición de Secciones */
         .page-section {
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 1;
+            transform: translateY(0);
+            width: 100%;
         }
+
         .hidden-section {
             display: none !important;
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(40px) scale(0.98);
         }
 
-        /* Estilos de Tarjetas e Interacción */
+        /* Indicador de Tab Deslizante (Barra Amarilla) */
+        #nav-indicator {
+            position: absolute;
+            bottom: 0;
+            height: 4px;
+            background: linear-gradient(to right, transparent, var(--gold-primary), transparent);
+            box-shadow: 0 -5px 15px var(--gold-primary);
+            transition: all 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* Estilos VIP Casino */
         .skin-card {
-            background: linear-gradient(145deg, #1e1e2f, #161626);
-            border-radius: 16px;
-            padding: 20px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: linear-gradient(165deg, #1a1a2e 0%, #0f0f1a 100%);
+            border-radius: 20px;
+            padding: 24px;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
             position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.1);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             overflow: hidden;
             z-index: 1;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
         }
 
         .skin-card:hover:not(.owned) {
-            transform: translateY(-8px) scale(1.02);
-            border-color: rgba(255, 215, 0, 0.4);
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+            transform: translateY(-10px);
+            border-color: var(--gold-primary);
+            box-shadow: 0 25px 50px -12px rgba(255, 215, 0, 0.15);
         }
 
         .skin-card.owned {
-            opacity: 0.8;
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-        
-        .skin-card.owned .skin-img {
-            filter: grayscale(0.5) brightness(0.7);
+            opacity: 0.6;
+            filter: grayscale(0.3);
+            border-color: rgba(255, 255, 255, 0.05);
         }
 
         .buy-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(13, 13, 20, 0.8);
+            background: rgba(7, 7, 12, 0.85);
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transition: opacity 0.3s ease;
-            backdrop-filter: blur(4px);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
             z-index: 20;
         }
 
@@ -90,21 +115,20 @@
 
         .rarity-glow {
             position: absolute;
-            top: 45%;
+            top: 40%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 160px;
-            height: 160px;
+            width: 180px;
+            height: 180px;
             border-radius: 50%;
-            filter: blur(45px);
-            opacity: 0.25;
+            filter: blur(50px);
+            opacity: 0.3;
             z-index: -1;
-            transition: all 0.4s ease;
         }
 
         .glow-cover { background: #ff3e3e; } 
         .glow-classified { background: #f032ff; } 
-        .glow-contraband { background: #ffd700; } 
+        .glow-contraband { background: var(--gold-primary); } 
         .glow-rare { background: #3e74ff; } 
         .glow-legendary { background: #ff6a00; }
 
@@ -112,407 +136,348 @@
             display: flex;
             align-items: baseline;
             font-weight: 900;
-            font-size: 1.6rem;
-            letter-spacing: -0.03em;
+            font-size: 1.8rem;
+            letter-spacing: -0.04em;
             font-style: italic;
             text-transform: uppercase;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
         }
 
         .knife-svg {
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             transform: rotate(-10deg) translateY(-2px);
-            filter: drop-shadow(0 0 8px rgba(92, 92, 255, 0.8));
+            filter: drop-shadow(0 0 12px var(--gold-primary));
         }
 
-        /* Pestañas de Juego */
         .game-section-tab {
             font-family: 'Black Ops One', cursive;
-            font-size: 0.95rem;
-            color: rgba(255, 255, 255, 0.3);
-            letter-spacing: 1px;
-            padding: 0 25px;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 2px;
+            padding: 0 30px;
             height: 86px; 
             cursor: pointer;
             display: flex;
             align-items: center;
             position: relative;
-            transition: color 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .tab-text {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: inline-block;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), text-shadow 0.3s ease;
         }
 
         .game-section-tab:hover .tab-text {
             transform: scale(1.15);
-            color: #ffd700;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            color: rgba(255, 255, 255, 0.8);
         }
 
         .game-section-tab.active .tab-text {
-            color: #ffd700;
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-        }
-
-        .game-section-tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: #ffd700;
-            border-radius: 4px 4px 0 0;
-            box-shadow: 0 -4px 15px rgba(255, 215, 0, 0.8);
-            z-index: 10;
+            color: var(--gold-primary);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            transform: scale(1.1);
         }
 
         .skin-img {
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.6));
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-origin: center;
+            filter: drop-shadow(0 15px 30px rgba(0,0,0,0.7));
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
         .skin-card:hover:not(.owned) .skin-img {
-            transform: scale(1.25) rotate(4deg);
-            filter: drop-shadow(0 15px 30px rgba(0,0,0,0.8));
+            transform: scale(1.3) rotate(5deg);
         }
 
+        /* Estilos Sidebar Mejorados */
         .sidebar-item {
-            padding: 10px 16px;
-            border-radius: 12px;
+            padding: 12px 20px;
+            border-radius: 14px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             border: 1px solid transparent;
-        }
-
-        .sidebar-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: white !important;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: #71717a;
         }
 
         .sidebar-item.active {
-            background: rgba(255, 215, 0, 0.1);
-            color: #ffd700 !important;
-            border-color: rgba(255, 215, 0, 0.2);
-            box-shadow: inset 0 0 15px rgba(255, 215, 0, 0.05);
+            background: linear-gradient(to right, rgba(255, 215, 0, 0.1), transparent);
+            color: var(--gold-primary) !important;
+            border-left: 3px solid var(--gold-primary);
         }
 
-        .market-group { position: relative; }
-
-        .sidebar-sub-list {
+        /* Submenú de Categorías (Anidadas) */
+        .sub-categories {
+            margin-left: 10px;
             max-height: 0;
             overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            padding-left: 8px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             opacity: 0;
+            border-left: 1px solid rgba(255, 215, 0, 0.05);
             pointer-events: none;
         }
 
-        .market-group:hover .sidebar-sub-list {
-            max-height: 400px;
-            margin-top: 4px;
+        /* Solo se despliega si el contenedor tiene la clase active */
+        .category-group.active .sub-categories {
+            max-height: 250px;
             opacity: 1;
+            margin-top: 8px;
             pointer-events: auto;
         }
 
-        .chevron-icon { transition: transform 0.3s ease; }
-        .market-group:hover .chevron-icon { transform: rotate(180deg); }
-
-        .sidebar-subitem {
-            padding: 8px 16px 8px 28px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
+        .sidebar-sub-item {
+            padding: 10px 20px;
             font-size: 10px;
-            font-weight: 700;
+            color: #52525b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: block;
+            border-radius: 8px;
             text-transform: uppercase;
-            color: #9ca3af;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-weight: 700;
         }
 
-        .sidebar-subitem::before {
-            content: '';
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            width: 3px;
-            height: 3px;
-            background: rgba(255, 215, 0, 0.3);
-            border-radius: 50%;
-            transform: translateY(-50%);
-        }
-
-        .sidebar-subitem:hover {
-            background: rgba(255, 215, 0, 0.05);
-            color: #ffd700;
-            transform: scale(1.05) translateX(5px);
-        }
-
-        .rarity-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            box-shadow: 0 0 8px currentColor;
+        .sidebar-sub-item:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.03);
+            transform: translateX(5px);
         }
 
         .points-badge {
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            padding: 6px 14px;
-            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 8px 18px;
+            border-radius: 14px;
+            box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.05);
             display: flex;
             align-items: center;
-            gap: 8px;
-            transition: transform 0.2s ease;
+            gap: 12px;
         }
 
-        .points-badge.updating { transform: scale(1.1); background: rgba(255, 215, 0, 0.3); }
-
-        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #0d0d14; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: var(--casino-dark); }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #2a2a40; border-radius: 10px; }
 
-        /* Banner VIP */
         .banner-container {
             position: relative;
-            border-radius: 1.5rem;
+            border-radius: 2rem;
             overflow: hidden;
-            margin-bottom: 2rem;
-            border: 2px solid rgba(255, 215, 0, 0.25);
-            background-color: #0d0d14;
-            height: 320px;
-            display: flex;
-            align-items: center;
-        }
-
-        .banner-bg-image {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 55%;
-            height: 100%;
-            background-image: url('https://cdn.skinport.com/nua5jmq7o9f6/3NZExzw8fozs4n6Q6deClv/f34de7a3cf34770296210a6bf4c6f6fb/Thumbnail_1__46_.png');
+            margin-bottom: 3rem;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            background-color: #0a0a14;
+            background-image: url('https://blix.gg/blog/wp-content/uploads/2025/05/sdfg-1024x580-1.jpg');
             background-size: cover;
-            background-position: center;
-            opacity: 0.7;
-            mask-image: linear-gradient(to right, transparent, black 60%);
-            -webkit-mask-image: linear-gradient(to right, transparent, black 60%);
+            background-position: center 30%;
+            height: 380px;
+            box-shadow: 0 40px 100px -20px rgba(0,0,0,0.8);
         }
 
         .hero-title-vip {
             font-family: 'Playfair Display', serif;
-            font-style: italic;
             font-weight: 900;
-            font-size: 4.8rem;
-            background: linear-gradient(to bottom, #fff7ad 20%, #ffd700 50%, #b8860b 80%);
+            font-size: 5.5rem;
+            background: linear-gradient(to bottom, #fff 30%, var(--gold-primary) 60%, var(--gold-secondary) 90%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.4));
-            line-height: 0.9;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+            line-height: 0.85;
         }
 
-        .vip-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #ffd700, #b8860b);
-            color: #000;
-            padding: 5px 14px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 900;
-            text-transform: uppercase;
-            margin-bottom: 15px;
-            letter-spacing: 1px;
-        }
-
-        /* ESTILOS DE LA RULETA AUTOMÁTICA */
+        /* RULETA */
         .roulette-wrapper {
             position: relative;
             width: 100%;
-            background: rgba(20, 20, 35, 0.6);
-            border: 1px solid rgba(255, 215, 0, 0.1);
-            border-radius: 20px;
-            margin-bottom: 3.5rem;
+            background: linear-gradient(to bottom, rgba(15, 15, 25, 0.8), rgba(7, 7, 12, 1));
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 24px;
+            margin-bottom: 4rem;
             padding: 20px 0;
             overflow: hidden;
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
         }
 
         .roulette-container {
             display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 0 50px;
             width: max-content;
-            gap: 10px;
-            padding: 10px 0;
-            /* Animación automática continua */
-            animation: scroll-left 50s linear infinite;
+            animation: rouletteScroll 40s linear infinite;
         }
 
-        @keyframes scroll-left {
+        @keyframes rouletteScroll {
             0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); } 
+            100% { transform: translateX(-50%); }
         }
 
         .roulette-item {
-            width: 130px;
-            height: 160px;
-            background: linear-gradient(180deg, #1e1e2f 0%, #161626 100%);
-            border-bottom: 3px solid #ffd700;
+            flex-shrink: 0;
+            width: 160px;
+            height: 200px;
+            background: #161626;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 4px solid var(--gold-primary);
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 12px;
-            flex-shrink: 0;
-            padding: 10px;
+            transition: all 0.3s ease;
             position: relative;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-            z-index: 1;
+            overflow: hidden;
         }
 
-        /* Función de zoom solicitada para los agentes */
-        .roulette-item:hover {
-            transform: scale(1.15);
-            z-index: 50;
-            border-color: #fff;
-            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-secondary));
+            color: #000;
+            padding: 14px 32px;
+            border-radius: 14px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(184, 134, 11, 0.3);
         }
 
-        .roulette-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(184, 134, 11, 0.5);
+            filter: brightness(1.1);
         }
 
         #notification {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: #ffd700;
-            color: #000;
+            top: 100px;
+            right: 40px;
+            background: #161626;
+            border-left: 4px solid var(--gold-primary);
             padding: 16px 24px;
-            border-radius: 12px;
-            font-weight: 800;
-            z-index: 100;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.4s ease;
-            text-transform: uppercase;
+            border-radius: 8px;
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            transform: translateX(120%);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
-        #notification.show { transform: translateY(0); opacity: 1; }
+
+        #notification.show { transform: translateX(0); }
     </style>
 </head>
 <body class="custom-scrollbar">
 
     <div id="notification">Inicia sesión para acceder al catálogo VIP.</div>
 
-    <nav class="bg-[#151525] px-8 py-0 flex items-center justify-between border-b border-white/10 sticky top-0 z-50 h-[86px]">
+    <nav class="bg-[#0a0a14]/90 backdrop-blur-md px-10 flex items-center justify-between border-b border-white/5 sticky top-0 z-50 h-[86px]">
         <div class="flex items-center h-full">
-            <div class="flex items-center cursor-pointer mr-8" onclick="showPage('store')">
-                <div class="bg-[#ffd700] p-2 rounded-xl mr-4">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="black"><path d="M12 2L4.5 20.29L5.21 21L12 18L18.79 21L19.5 20.29L12 2Z"/></svg>
+            <div class="flex items-center cursor-pointer mr-12" onclick="showPage('store')">
+                <div class="bg-gradient-to-br from-yellow-400 to-yellow-700 p-2.5 rounded-2xl mr-4 shadow-lg shadow-yellow-900/20">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="black"><path d="M12 2L4.5 20.29L5.21 21L12 18L18.79 21L19.5 20.29L12 2Z"/></svg>
                 </div>
                 <div class="logo-text">
                     SK<span class="inline-flex mx-1"><svg class="knife-svg" viewBox="0 0 24 24" fill="#ffd700"><path d="M21.7,2.3c-0.4-0.4-1-0.4-1.4,0l-5.1,5.1c-0.6-0.3-1.3-0.5-2.1-0.5c-2.5,0-4.5,2-4.5,4.5c0,0.8,0.2,1.5,0.5,2.1L2,21.1c-0.4,0.4-0.4,1,0,1.4s1,0.4,1.4,0l7.6-7.6c0.6,0.3,1.3,0.5,2.1,0.5c2.5,0,4.5-2,4.5-4.5c0-0.8-0.2-1.5-0.5-2.1l5.1-5.1C22.1,3.3,22.1,2.7,21.7,2.3z"/></svg></span>N.LAN
                 </div>
             </div>
-            <div class="flex items-center h-full border-l border-white/10 ml-4 pl-4">
-                <div class="game-section-tab active"><span class="tab-text">CS-GO</span></div>
-                <div class="game-section-tab"><span class="tab-text">CS-1.6</span></div>
+            <div class="flex items-center h-full ml-4 relative" id="tabs-nav">
+                <!-- Barra Amarilla Deslizante -->
+                <div id="nav-indicator"></div>
+                
+                <div class="game-section-tab active" id="tab-csgo" onclick="showGameSection('csgo')"><span class="tab-text">CS-GO</span></div>
+                <div class="game-section-tab" id="tab-cs16" onclick="showGameSection('cs16')"><span class="tab-text">CS-1.6</span></div>
             </div>
         </div>
 
-        <div class="flex items-center gap-8">
-            <div id="user-info" class="hidden flex items-center gap-6">
-                <div class="points-badge" id="points-container">
+        <div class="flex items-center gap-10">
+            <div id="user-info" class="hidden flex items-center gap-8">
+                <div class="points-badge">
+                    <div class="w-2.5 h-2.5 bg-yellow-400 rounded-full animate-pulse shadow-[0_0_10px_#ffd700]"></div>
                     <div class="flex flex-col">
-                        <span class="text-[9px] text-[#ffd700] font-black uppercase mb-1">CS POINTS</span>
-                        <span class="text-sm font-bold text-white" id="user-balance-display">$ 0</span>
+                        <span class="text-[8px] text-yellow-500/80 font-black uppercase">Créditos VIP</span>
+                        <span class="text-sm font-bold text-white tracking-wide" id="user-balance-display">$ 0</span>
                     </div>
                 </div>
-                <div class="flex items-center gap-3">
-                    <span class="text-sm font-bold text-[#ffd700] uppercase border-l border-white/10 pl-4">VIP Xican.net</span>
-                    <button onclick="logout()" class="text-[10px] text-gray-400 hover:text-white uppercase border border-white/10 px-4 py-2 rounded-lg">Salir</button>
+                <div class="flex items-center gap-4">
+                    <span class="text-[11px] font-black text-white/40 uppercase tracking-widest border-l border-white/10 pl-6">Member: <span class="text-yellow-500">Xican.net</span></span>
+                    <button onclick="logout()" class="text-[9px] text-gray-500 hover:text-white uppercase transition-colors">Salir</button>
                 </div>
             </div>
-            <button id="main-login-btn" onclick="showPage('login')" class="bg-[#ffd700] hover:bg-[#ffeb3b] text-black px-8 py-3 rounded-xl text-sm font-black uppercase">Iniciar sesión</button>
+            <button id="main-login-btn" onclick="showPage('login')" class="btn-gold text-xs">Entrar al Club</button>
         </div>
     </nav>
 
     <div class="main-layout">
-        <aside class="w-72 p-8 hidden md:block bg-[#11111d] border-r border-white/5 h-full overflow-y-auto custom-scrollbar">
-            <h2 class="text-xl font-black mb-8 italic uppercase text-gray-200">Menú</h2>
-            
-            <div class="space-y-1 market-group mb-4">
-                <div class="sidebar-item active font-bold text-[11px] uppercase flex items-center justify-between group">
-                    Tipo de Items
-                    <svg class="chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
-                </div>
-                <div class="sidebar-sub-list">
-                    <div class="sidebar-subitem">Rifles de Asalto</div>
-                    <div class="sidebar-subitem">Cuchillos VIP</div>
-                    <div class="sidebar-subitem">Guantes Premium</div>
-                    <div class="sidebar-subitem">Armas Cortas</div>
-                    <div class="sidebar-subitem">Snipers de Élite</div>
+        <aside class="w-80 p-10 hidden md:block bg-[#08080f] border-r border-white/5 h-full overflow-y-auto custom-scrollbar">
+            <div class="mb-12">
+                <p class="text-[10px] text-yellow-500/50 font-black uppercase tracking-[0.3em] mb-4">Categorías</p>
+                <div class="space-y-2">
+                    <!-- Categoría Principal con Submenú Escondido -->
+                    <div class="category-group active" id="category-all-group">
+                        <div class="sidebar-item active uppercase font-bold" onclick="toggleCategoryGroup('category-all-group')">Todos los Objetos</div>
+                        <div class="sub-categories">
+                            <span class="sidebar-sub-item">Cuchillos de Lujo</span>
+                            <span class="sidebar-sub-item">Guantes de Gala</span>
+                            <span class="sidebar-sub-item">Rifles StatTrak™</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="space-y-1 market-group">
-                <div class="sidebar-item active font-bold text-[11px] uppercase flex items-center justify-between group">
-                    Rarezas
-                    <svg class="chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
-                </div>
-                <div class="sidebar-sub-list">
-                    <div class="sidebar-subitem"><div class="rarity-dot text-[#ffd700] bg-[#ffd700]"></div>Contrabando</div>
-                    <div class="sidebar-subitem"><div class="rarity-dot text-[#ff6a00] bg-[#ff6a00]"></div>Legendario</div>
-                    <div class="sidebar-subitem"><div class="rarity-dot text-[#f032ff] bg-[#f032ff]"></div>Enublado</div>
-                    <div class="sidebar-subitem"><div class="rarity-dot text-[#3e74ff] bg-[#3e74ff]"></div>Raro</div>
-                    <div class="sidebar-subitem"><div class="rarity-dot text-[#ff3e3e] bg-[#ff3e3e]"></div>Encubierto</div>
+            <div>
+                <p class="text-[10px] text-yellow-500/50 font-black uppercase tracking-[0.3em] mb-4">Filtrar por Rareza</p>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-3 text-[10px] font-bold text-gray-400 hover:text-white cursor-pointer transition-colors group">
+                        <div class="w-2 h-2 rounded-full bg-yellow-500 shadow-[0_0_8px_#ffd700]"></div> CONTRABANDO
+                    </div>
+                    <div class="flex items-center gap-3 text-[10px] font-bold text-gray-400 hover:text-white cursor-pointer transition-colors">
+                        <div class="w-2 h-2 rounded-full bg-orange-500 shadow-[0_0_8px_#f97316]"></div> LEGENDARIO
+                    </div>
                 </div>
             </div>
         </aside>
 
-        <div class="scrollable-content custom-scrollbar">
-            <section id="store-section" class="p-8 page-section">
-                <!-- Banner -->
+        <div class="scrollable-content custom-scrollbar" id="content-container">
+            <section id="store-section" class="p-10 page-section">
                 <div class="banner-container">
-                    <div class="banner-bg-image"></div>
-                    <div class="relative z-10 p-16 h-full flex flex-col justify-center">
-                        <div>
-                            <div class="vip-badge">Premium Pass</div>
-                            <h2 class="hero-title-vip italic uppercase">Mercado<br>Premium</h2>
+                    <div class="relative z-10 p-20 h-full flex flex-col justify-center bg-gradient-to-r from-black via-black/80 to-transparent">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="w-12 h-[1px] bg-yellow-500"></span>
+                            <span class="text-xs font-black text-yellow-500 uppercase tracking-[0.4em]">Diamond Member Club</span>
                         </div>
-                        <p class="text-gray-400 mt-6 font-medium max-w-md text-sm leading-relaxed">
-                            Arsenal exclusivo de alto rango para los miembros más selectos. 
-                            Invierte tus CS POINTS ahora y domina el campo de batalla.
+                        <h2 class="hero-title-vip italic uppercase mb-6">Arsenal<br>Royale</h2>
+                        <p class="text-gray-200 font-medium max-w-md text-sm leading-relaxed mb-8 opacity-90">
+                            Piezas únicas de colección para jugadores de alto nivel. Exclusividad garantizada en cada adquisición.
                         </p>
+                        <button class="btn-gold w-fit px-12">Explorar Rarezas</button>
                     </div>
                 </div>
 
-                <!-- RULETA DE AGENTES (Decorativa) -->
-                <div class="roulette-wrapper" id="roulette-main">
-                    <div class="roulette-container" id="roulette-rail">
-                        <!-- Se generarán dinámicamente -->
-                    </div>
+                <div class="roulette-wrapper">
+                    <div class="roulette-container" id="roulette-rail"></div>
                 </div>
                 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 pb-10" id="skin-grid"></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-10 pb-20" id="skin-grid"></div>
+            </section>
+
+            <section id="cs16-section" class="p-10 page-section hidden-section">
+                <div class="banner-container mb-12 border-emerald-500/20 bg-[#050b08] !bg-none">
+                    <div class="relative z-10 p-20 w-full h-full flex flex-col justify-center bg-gradient-to-r from-black via-black/80 to-transparent">
+                        <h2 class="text-7xl font-black italic uppercase text-white mb-6 drop-shadow-2xl">CS 1.6<br><span class="text-emerald-500">LEGACY</span></h2>
+                        <button class="bg-emerald-600 hover:bg-emerald-500 text-black px-10 py-4 rounded-xl font-black uppercase text-xs w-fit transition-all">Ver Colección</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-10 pb-20" id="skin-grid-cs16"></div>
             </section>
 
             <section id="login-section" class="page-section hidden-section flex items-center justify-center min-h-full p-6">
-                <div class="bg-[#161626] border border-yellow-500/20 w-full max-w-md p-10 rounded-3xl text-center shadow-2xl">
-                    <h2 class="text-3xl font-black italic uppercase mb-8 text-[#ffd700]">Acceso VIP</h2>
-                    <form class="space-y-5" onsubmit="handleLogin(event)">
-                        <input type="text" id="username" placeholder="Usuario VIP" class="w-full bg-[#1a1a2e] border border-white/10 p-4 rounded-xl text-white outline-none focus:border-[#ffd700]" required>
-                        <input type="password" id="password" placeholder="Clave" class="w-full bg-[#1a1a2e] border border-white/10 p-4 rounded-xl text-white outline-none focus:border-[#ffd700]" required>
-                        <button type="submit" class="w-full bg-[#ffd700] text-black py-4 rounded-xl font-black uppercase">Entrar</button>
+                <div class="bg-[#0f0f1a] border border-yellow-500/10 w-full max-w-lg p-14 rounded-[2.5rem] text-center shadow-[0_50px_100px_-20px_rgba(0,0,0,0.9)]">
+                    <h2 class="text-4xl font-black italic uppercase mb-2 text-white">VIP Lounge</h2>
+                    <p class="text-yellow-500/50 text-[10px] font-black uppercase tracking-[0.3em] mb-12">Solo miembros autorizados</p>
+                    <form class="space-y-6" onsubmit="handleLogin(event)">
+                        <input type="text" id="username" placeholder="Usuario" class="w-full bg-white/5 border border-white/5 p-5 rounded-2xl text-white outline-none focus:border-yellow-500/50 transition-all text-sm" required>
+                        <input type="password" id="password" placeholder="Clave de Seguridad" class="w-full bg-white/5 border border-white/5 p-5 rounded-2xl text-white outline-none focus:border-yellow-500/50 transition-all text-sm" required>
+                        <button type="submit" class="btn-gold w-full py-5 text-sm">Validar Credenciales</button>
                     </form>
                 </div>
             </section>
@@ -532,89 +497,97 @@
             { id: 4, name: "AWP | Fade", price: 1150, rarity: "glow-classified", img: "https://cdn.skinbaron.de/steamdata/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgposr-kLAtl7PLJTjtO7dGzh7-HnvD8J_XSwGkG65d1juqZp4rz3VLhrhc_azqhJtORdgM4YFvR-1C5wry5gpHqot2XnpVn5DmP?optimizer=image" }
         ];
 
-        // Octava posición (índice 7) actualizada con la nueva imagen del Chef
+        const skinsCS16 = [
+            { id: 100, name: "Howl | Legacy Edition", price: 5000, rarity: "glow-contraband", isPresentation: true, imgs: ["https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_m4a1_cu_m4a1_howling_light_large.c64a9fc9fa04b5d10d4b1e200135e59285c8a77c.png", "https://all-cs.ru/storage/styles/medium_size/public/screenshots/cs16/m4a4-howl-w-stickers.jpg?itok=hVnv6D9o"] },
+            { id: 101, name: "Glock-18 | Water Elemental", price: 5000, rarity: "glow-classified", isPresentation: true, imgs: ["https://static.g4skins.com/items/730_2/glock-18-water-elemental-(field-tested).png?v=4", "https://all-cs.ru/storage/styles/medium_size/public/screenshots/cs16/glock-water-elemental.jpg?itok=g3m_HQqw"] }
+        ];
+
         const agents = [
             "https://assets.lis-skins.com/blogfiles/zl8VMOrs66G2Xkh2KJsroIcKO1r3ICdXjOWBkhNR.png",
             "https://steamcommunity-a.akamaihd.net/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXA6Q1NL4kmrAlOA0_FVPCi2t_fUkRxNztDu4W1Iwhl3frQTitD_tW3mpSM2fXyY7-Fx2kJ7Z0hjOqTp9v32ge1_kRqNzv7I4TDcwE-YVjQ_Vm2kOjxxcjryget60M/310fx238f",
             "https://key-drop.com/blog/wp-content/uploads/2024/11/Soldier-Phoenix.png",
             "https://static.wikia.nocookie.net/cswikia/images/1/1c/Guerrilla_warfare_variantf.png",
-            "https://key-drop.com/blog/wp-content/uploads/2024/11/Lt.-Commander-Ricksaw-NSWC-SEAL.png",
-            "https://community.fastly.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIa-2lmxU-LR0dnuNm6E8Vl45Iv181z1fgn8oZTh8Sla4c24abZkIf6HBinGlu0k4bU7Givnk01352yByd_6IHLGZgElDpchEbNZtxewx9zhNr_m-UWA3HK9C48i/360fx360f",
-            "https://community.fastly.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIa-2lmxU-LR0dnuNm6E8Vl45Iv181z1fh7lk6nm_ytk-fO8YaVjNPLdXz6TkLdw5LY4Hnmwl0wktj7dn4r9I3OWPFApC5F1QeAO5xi4lIDiM_SiuVKk3V4ZcQ/330x192?allow_animated=1",
-            "https://key-drop.com/blog/wp-content/uploads/2024/03/chef-descadrom-rouchard.png"
+            "https://key-drop.com/blog/wp-content/uploads/2024/11/Lt.-Commander-Ricksaw-NSWC-SEAL.png"
         ];
+
+        function toggleCategoryGroup(id) {
+            const group = document.getElementById(id);
+            if (group) {
+                // Alternamos la clase active en el contenedor del grupo
+                group.classList.toggle('active');
+            }
+        }
+
+        /* Función para actualizar la posición de la barra amarilla */
+        function moveNavIndicator() {
+            const activeTab = document.querySelector('.game-section-tab.active');
+            const indicator = document.getElementById('nav-indicator');
+            if (activeTab && indicator) {
+                const left = activeTab.offsetLeft;
+                const width = activeTab.offsetWidth;
+                indicator.style.left = `${left + (width * 0.15)}px`;
+                indicator.style.width = `${width * 0.7}px`;
+            }
+        }
 
         function initRoulette() {
             const rail = document.getElementById('roulette-rail');
+            if(!rail) return;
             let content = "";
-            const fullSet = [...agents, ...agents, ...agents, ...agents];
+            const fullSet = [...agents, ...agents, ...agents, ...agents, ...agents, ...agents];
             fullSet.forEach(imgUrl => {
-                content += `
-                    <div class="roulette-item">
-                        <img src="${imgUrl}">
-                    </div>
-                `;
+                content += `<div class="roulette-item"><img src="${imgUrl}"></div>`;
             });
-            rail.innerHTML = content + content; 
+            rail.innerHTML = content; 
         }
 
         function formatCurrency(amount) { return '$ ' + Math.floor(amount).toLocaleString('de-DE'); }
-
-        function animateBalance(targetValue) {
-            const duration = 1500; 
-            const startValue = displayedBalance;
-            const startTime = performance.now();
-
-            function update(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const easeValue = 1 - Math.pow(2, -10 * progress);
-                
-                displayedBalance = startValue + (targetValue - startValue) * easeValue;
-                document.getElementById('user-balance-display').innerText = formatCurrency(displayedBalance);
-
-                if (progress < 1) {
-                    requestAnimationFrame(update);
-                } else {
-                    displayedBalance = targetValue;
-                    document.getElementById('user-balance-display').innerText = formatCurrency(displayedBalance);
-                }
-            }
-            requestAnimationFrame(update);
-        }
 
         function updateBalanceUI(instant = false) {
             if (instant) {
                 displayedBalance = balance;
                 document.getElementById('user-balance-display').innerText = formatCurrency(balance);
             } else {
-                animateBalance(balance);
+                const startValue = displayedBalance;
+                const startTime = performance.now();
+                function update(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / 2000, 1);
+                    displayedBalance = startValue + (balance - startValue) * progress;
+                    document.getElementById('user-balance-display').innerText = formatCurrency(displayedBalance);
+                    if (progress < 1) requestAnimationFrame(update);
+                }
+                requestAnimationFrame(update);
             }
         }
 
         function renderSkins() {
             const grid = document.getElementById('skin-grid');
-            grid.innerHTML = skins.map(skin => {
-                const isOwned = ownedSkins.includes(skin.id);
-                return `
-                    <div class="skin-card group ${isOwned ? 'owned' : ''}">
-                        <div class="buy-overlay">
-                            ${isOwned ? 
-                                `<button class="bg-gray-600 text-white px-6 py-3 rounded-xl font-black uppercase cursor-not-allowed">Obtenido</button>` :
-                                `<button onclick="buySkin(${skin.id}, ${skin.price})" class="bg-[#ffd700] text-black px-6 py-3 rounded-xl font-black uppercase hover:scale-110 transition-transform">Obtener Item</button>`
-                            }
-                        </div>
-                        <div class="rarity-glow ${skin.rarity}"></div>
-                        <div class="flex justify-center items-center py-8 h-48 overflow-hidden">
-                            <img src="${skin.img}" class="skin-img max-w-full max-h-full object-contain pointer-events-none">
-                        </div>
-                        <div class="mt-4">
-                            <div class="text-[11px] text-[#ffd700] font-black uppercase mb-1">${skin.name}</div>
-                            <span class="text-xl font-black text-white">${isOwned ? 'COLECCIÓN' : formatCurrency(skin.price)}</span>
-                        </div>
+            if(grid) grid.innerHTML = skins.map(skin => renderSkinCard(skin)).join('');
+            const grid16 = document.getElementById('skin-grid-cs16');
+            if(grid16) grid16.innerHTML = skinsCS16.map(skin => renderSkinCard(skin)).join('');
+        }
+
+        function renderSkinCard(skin) {
+            const isOwned = ownedSkins.includes(skin.id);
+            return `
+                <div class="skin-card group ${isOwned ? 'owned' : ''}">
+                    <div class="buy-overlay">
+                        ${isOwned ? 
+                            `<button class="bg-white/10 text-white/40 px-8 py-4 rounded-xl font-black uppercase text-xs cursor-not-allowed">Adquirido</button>` :
+                            `<button onclick="buySkin(${skin.id}, ${skin.price})" class="btn-gold text-xs">Comprar Item</button>`
+                        }
                     </div>
-                `;
-            }).join('');
+                    <div class="rarity-glow ${skin.rarity}"></div>
+                    <div class="flex justify-center items-center h-48 relative z-10">
+                        <img src="${skin.isPresentation ? skin.imgs[0] : skin.img}" class="skin-img max-w-[80%] max-h-[80%] object-contain">
+                    </div>
+                    <div class="mt-4 border-t border-white/5 pt-4">
+                        <div class="text-[9px] text-yellow-500 font-black uppercase tracking-widest mb-1">${skin.name}</div>
+                        <div class="text-lg font-bold text-white">${isOwned ? 'COLECCIÓN' : formatCurrency(skin.price)}</div>
+                    </div>
+                </div>
+            `;
         }
 
         function showNotification(text) {
@@ -632,21 +605,60 @@
                 updateBalanceUI(); 
                 renderSkins();
                 confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ffd700', '#ffffff'] });
-            } else {
-                showNotification("Puntos insuficientes.");
-            }
+            } else showNotification("Saldo insuficiente.");
         }
 
+        let isTransitioning = false;
         function showPage(pageId) {
-            const store = document.getElementById('store-section');
-            const login = document.getElementById('login-section');
-            if(pageId === 'login') {
-                store.classList.add('hidden-section');
-                setTimeout(() => login.classList.remove('hidden-section'), 50);
-            } else {
-                login.classList.add('hidden-section');
-                setTimeout(() => store.classList.remove('hidden-section'), 50);
+            if (isTransitioning) return;
+            isTransitioning = true;
+
+            const sections = ['store-section', 'login-section', 'cs16-section'];
+            const targetId = pageId === 'login' ? 'login-section' : (pageId === 'cs16' ? 'cs16-section' : 'store-section');
+            const currentSection = sections.find(id => !document.getElementById(id).classList.contains('hidden-section'));
+            
+            if (currentSection === targetId) {
+                isTransitioning = false;
+                return;
             }
+
+            if (currentSection) {
+                const currentEl = document.getElementById(currentSection);
+                currentEl.style.opacity = '0';
+                currentEl.style.transform = 'translateY(50px) scale(0.95)';
+            }
+
+            setTimeout(() => {
+                sections.forEach(id => document.getElementById(id).classList.add('hidden-section'));
+                const targetEl = document.getElementById(targetId);
+                
+                targetEl.classList.remove('hidden-section');
+                targetEl.style.opacity = '0';
+                targetEl.style.transform = 'translateY(-30px) scale(1.02)';
+                
+                targetEl.offsetHeight;
+
+                targetEl.style.opacity = '1';
+                targetEl.style.transform = 'translateY(0) scale(1)';
+
+                setTimeout(() => {
+                    targetEl.style.opacity = '';
+                    targetEl.style.transform = '';
+                    isTransitioning = false;
+                }, 600);
+            }, 300);
+        }
+
+        function showGameSection(game) {
+            document.querySelectorAll('.game-section-tab').forEach(t => t.classList.remove('active'));
+            if (game === 'csgo') {
+                document.getElementById('tab-csgo').classList.add('active');
+                showPage('store');
+            } else {
+                document.getElementById('tab-cs16').classList.add('active');
+                showPage('cs16');
+            }
+            moveNavIndicator();
         }
 
         function handleLogin(event) {
@@ -657,23 +669,25 @@
                 document.getElementById('user-info').classList.remove('hidden');
                 updateBalanceUI(true); 
                 showPage('store');
+                showNotification("Acceso VIP concedido");
             }
         }
 
         function logout() {
             isLoggedIn = false;
-            ownedSkins = [];
-            balance = 1999999999;
-            displayedBalance = 0;
             document.getElementById('main-login-btn').classList.remove('hidden');
             document.getElementById('user-info').classList.add('hidden');
-            renderSkins();
-            showPage('store');
+            showGameSection('csgo');
         }
 
-        // Init
-        renderSkins();
-        initRoulette();
+        window.onload = () => {
+            renderSkins();
+            initRoulette();
+            moveNavIndicator(); 
+        };
+
+        window.onresize = moveNavIndicator;
     </script>
 </body>
 </html>
+
