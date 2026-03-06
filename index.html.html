@@ -190,7 +190,7 @@
             transform: scale(1.3) rotate(5deg);
         }
 
-        /* Estilos Sidebar Mejorados */
+        /* Estilos Sidebar */
         .sidebar-item {
             padding: 12px 20px;
             border-radius: 14px;
@@ -206,43 +206,6 @@
             background: linear-gradient(to right, rgba(255, 215, 0, 0.1), transparent);
             color: var(--gold-primary) !important;
             border-left: 3px solid var(--gold-primary);
-        }
-
-        /* Submenú de Categorías (Anidadas) */
-        .sub-categories {
-            margin-left: 10px;
-            max-height: 0;
-            overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            opacity: 0;
-            border-left: 1px solid rgba(255, 215, 0, 0.05);
-            pointer-events: none;
-        }
-
-        /* Solo se despliega si el contenedor tiene la clase active */
-        .category-group.active .sub-categories {
-            max-height: 250px;
-            opacity: 1;
-            margin-top: 8px;
-            pointer-events: auto;
-        }
-
-        .sidebar-sub-item {
-            padding: 10px 20px;
-            font-size: 10px;
-            color: #52525b;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: block;
-            border-radius: 8px;
-            text-transform: uppercase;
-            font-weight: 700;
-        }
-
-        .sidebar-sub-item:hover {
-            color: white;
-            background: rgba(255, 255, 255, 0.03);
-            transform: translateX(5px);
         }
 
         .points-badge {
@@ -272,6 +235,12 @@
             background-position: center 30%;
             height: 380px;
             box-shadow: 0 40px 100px -20px rgba(0,0,0,0.8);
+        }
+
+        .banner-cs16 {
+            background-image: url('https://blog.neshastore.com/wp-content/uploads/2024/10/glock-18-elemental-de-agua-1024x576.png');
+            background-size: cover;
+            background-position: center;
         }
 
         .hero-title-vip {
@@ -412,15 +381,7 @@
             <div class="mb-12">
                 <p class="text-[10px] text-yellow-500/50 font-black uppercase tracking-[0.3em] mb-4">Categorías</p>
                 <div class="space-y-2">
-                    <!-- Categoría Principal con Submenú Escondido -->
-                    <div class="category-group active" id="category-all-group">
-                        <div class="sidebar-item active uppercase font-bold" onclick="toggleCategoryGroup('category-all-group')">Todos los Objetos</div>
-                        <div class="sub-categories">
-                            <span class="sidebar-sub-item">Cuchillos de Lujo</span>
-                            <span class="sidebar-sub-item">Guantes de Gala</span>
-                            <span class="sidebar-sub-item">Rifles StatTrak™</span>
-                        </div>
-                    </div>
+                    <div class="sidebar-item active uppercase font-bold">Todos los Objetos</div>
                 </div>
             </div>
 
@@ -461,8 +422,8 @@
             </section>
 
             <section id="cs16-section" class="p-10 page-section hidden-section">
-                <div class="banner-container mb-12 border-emerald-500/20 bg-[#050b08] !bg-none">
-                    <div class="relative z-10 p-20 w-full h-full flex flex-col justify-center bg-gradient-to-r from-black via-black/80 to-transparent">
+                <div class="banner-container banner-cs16 mb-12 border-emerald-500/20 bg-[#050b08]">
+                    <div class="relative z-10 p-20 w-full h-full flex flex-col justify-center bg-gradient-to-r from-black via-black/60 to-transparent">
                         <h2 class="text-7xl font-black italic uppercase text-white mb-6 drop-shadow-2xl">CS 1.6<br><span class="text-emerald-500">LEGACY</span></h2>
                         <button class="bg-emerald-600 hover:bg-emerald-500 text-black px-10 py-4 rounded-xl font-black uppercase text-xs w-fit transition-all">Ver Colección</button>
                     </div>
@@ -510,15 +471,6 @@
             "https://key-drop.com/blog/wp-content/uploads/2024/11/Lt.-Commander-Ricksaw-NSWC-SEAL.png"
         ];
 
-        function toggleCategoryGroup(id) {
-            const group = document.getElementById(id);
-            if (group) {
-                // Alternamos la clase active en el contenedor del grupo
-                group.classList.toggle('active');
-            }
-        }
-
-        /* Función para actualizar la posición de la barra amarilla */
         function moveNavIndicator() {
             const activeTab = document.querySelector('.game-section-tab.active');
             const indicator = document.getElementById('nav-indicator');
@@ -690,4 +642,3 @@
     </script>
 </body>
 </html>
-
