@@ -292,9 +292,30 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+        }
+
+        /* EFECTO ZOOM AL DIRECCIONAR (HOVER) AGENTES */
+        .roulette-item:hover {
+            transform: scale(1.1);
+            z-index: 10;
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+            background: #1c1c30;
+        }
+
+        .roulette-item img {
+            width: 80%;
+            height: 80%;
+            object-contain: contain;
+            transition: transform 0.4s ease;
+        }
+
+        .roulette-item:hover img {
+            transform: scale(1.15);
         }
 
         .btn-gold {
