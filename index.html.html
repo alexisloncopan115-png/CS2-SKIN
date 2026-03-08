@@ -15,6 +15,13 @@
             --gold-secondary: #b8860b;
             --casino-dark: #07070c;
             --casino-card: #12121f;
+            
+            /* Colores de Rareza */
+            --rarity-rare: #4b69ff;
+            --rarity-mythical: #8847ff;
+            --rarity-legendary: #d32ce6;
+            --rarity-ancient: #eb4b4b;
+            --rarity-contraband: #e4ae39;
         }
 
         body {
@@ -40,23 +47,48 @@
             overflow-y: auto;
             scrollbar-gutter: stable;
             position: relative;
+            perspective: 1000px;
         }
 
-        /* Estilos de Transición de Secciones */
+        /* Transition "Desarmado" (Disassembled Effect) */
         .page-section {
-            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: 
+                opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
+                transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                filter 0.6s ease,
+                clip-path 0.8s cubic-bezier(0.77, 0, 0.175, 1);
             opacity: 1;
-            transform: translateY(0);
+            transform: translateX(0) scale(1);
+            filter: blur(0px) brightness(1);
+            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
             width: 100%;
+            position: relative;
+            display: block;
+        }
+
+        /* Estado "Saliendo hacia la izquierda" (Desarmado) */
+        .exit-left {
+            opacity: 0;
+            filter: blur(15px) brightness(2);
+            transform: translateX(-100px) scale(0.9) rotateY(-10deg);
+            /* Simula piezas rompiéndose y desvaneciéndose hacia la izquierda */
+            clip-path: polygon(0% 15%, 30% 0%, 50% 25%, 70% 0%, 100% 15%, 85% 50%, 100% 85%, 70% 100%, 50% 75%, 30% 100%, 0% 85%, 15% 50%);
+            pointer-events: none;
+        }
+
+        /* Estado "Entrando desde la derecha" (Ensamblándose) */
+        .enter-right {
+            opacity: 0;
+            transform: translateX(100px) scale(1.1) rotateY(10deg);
+            filter: blur(10px);
+            clip-path: polygon(10% 0%, 90% 10%, 100% 50%, 80% 90%, 20% 100%, 0% 60%, 5% 20%);
         }
 
         .hidden-section {
             display: none !important;
-            opacity: 0;
-            transform: translateY(40px) scale(0.98);
         }
 
-        /* Indicador de Tab Deslizante (Barra Amarilla) */
+        /* Indicador Nav */
         #nav-indicator {
             position: absolute;
             bottom: 0;
@@ -68,7 +100,48 @@
             z-index: 10;
         }
 
-        /* Estilos VIP Casino */
+        /* BRANDING & LOGO */
+        .brand-logo-img {
+            height: 48px;
+            width: auto;
+            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.4)) brightness(1.2);
+            transition: all 0.4s ease;
+        }
+
+        .brand-container:hover .brand-logo-img {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.7)) brightness(1.5);
+        }
+
+        .logo-text {
+            display: flex;
+            align-items: center;
+            font-weight: 900;
+            font-size: 1.8rem;
+            letter-spacing: -0.04em;
+            font-style: italic;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            gap: 1px;
+        }
+
+        /* DISEÑO DE CUCHILLO REALISTA */
+        .knife-icon {
+            height: 2rem;
+            width: auto;
+            fill: var(--gold-primary);
+            filter: drop-shadow(0 0 8px var(--gold-primary));
+            transform: rotate(-10deg);
+            margin: 0 -2px;
+            transition: transform 0.3s ease;
+        }
+
+        .brand-container:hover .knife-icon {
+            transform: rotate(0deg) scale(1.1);
+        }
+
+        /* Cards Estilos */
         .skin-card {
             background: linear-gradient(165deg, #1a1a2e 0%, #0f0f1a 100%);
             border-radius: 20px;
@@ -81,7 +154,6 @@
             justify-content: space-between;
             overflow: hidden;
             z-index: 1;
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
         }
 
         .skin-card:hover:not(.owned) {
@@ -93,7 +165,6 @@
         .skin-card.owned {
             opacity: 0.6;
             filter: grayscale(0.3);
-            border-color: rgba(255, 255, 255, 0.05);
         }
 
         .buy-overlay {
@@ -109,9 +180,7 @@
             z-index: 20;
         }
 
-        .skin-card:hover .buy-overlay {
-            opacity: 1;
-        }
+        .skin-card:hover .buy-overlay { opacity: 1; }
 
         .rarity-glow {
             position: absolute;
@@ -122,7 +191,7 @@
             height: 180px;
             border-radius: 50%;
             filter: blur(50px);
-            opacity: 0.3;
+            opacity: 0.25;
             z-index: -1;
         }
 
@@ -132,29 +201,11 @@
         .glow-rare { background: #3e74ff; } 
         .glow-legendary { background: #ff6a00; }
 
-        .logo-text {
-            display: flex;
-            align-items: baseline;
-            font-weight: 900;
-            font-size: 1.8rem;
-            letter-spacing: -0.04em;
-            font-style: italic;
-            text-transform: uppercase;
-            color: #fff;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-        }
-
-        .knife-svg {
-            width: 26px;
-            height: 26px;
-            transform: rotate(-10deg) translateY(-2px);
-            filter: drop-shadow(0 0 12px var(--gold-primary));
-        }
-
+        /* Estilos de Pestañas de Navegación con Efecto Zoom */
         .game-section-tab {
             font-family: 'Black Ops One', cursive;
             font-size: 1rem;
-            color: rgba(255, 255, 255, 0.25);
+            color: rgba(255, 255, 255, 0.2);
             letter-spacing: 2px;
             padding: 0 30px;
             height: 86px; 
@@ -162,23 +213,27 @@
             display: flex;
             align-items: center;
             position: relative;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .tab-text {
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s ease;
             display: inline-block;
         }
 
         .game-section-tab:hover .tab-text {
-            transform: scale(1.15);
+            transform: scale(1.2);
             color: rgba(255, 255, 255, 0.8);
         }
 
         .game-section-tab.active .tab-text {
             color: var(--gold-primary);
             text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-            transform: scale(1.1);
+            transform: scale(1);
+        }
+        
+        .game-section-tab.active:hover .tab-text {
+            transform: scale(1.2);
         }
 
         .skin-img {
@@ -186,20 +241,25 @@
             transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
-        .skin-card:hover:not(.owned) .skin-img {
-            transform: scale(1.3) rotate(5deg);
-        }
+        .skin-card:hover:not(.owned) .skin-img { transform: scale(1.3) rotate(5deg); }
 
-        /* Estilos Sidebar */
+        /* Sidebar & Rarities */
         .sidebar-item {
             padding: 12px 20px;
             border-radius: 14px;
             cursor: pointer;
             transition: all 0.3s ease;
-            border: 1px solid transparent;
             font-size: 11px;
             letter-spacing: 1px;
             color: #71717a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+            color: white;
         }
 
         .sidebar-item.active {
@@ -208,12 +268,18 @@
             border-left: 3px solid var(--gold-primary);
         }
 
+        .rarity-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
         .points-badge {
             background: rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(255, 215, 0, 0.3);
             padding: 8px 18px;
             border-radius: 14px;
-            box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.05);
             display: flex;
             align-items: center;
             gap: 12px;
@@ -230,17 +296,10 @@
             margin-bottom: 3rem;
             border: 1px solid rgba(255, 215, 0, 0.2);
             background-color: #0a0a14;
-            background-image: url('https://blix.gg/blog/wp-content/uploads/2025/05/sdfg-1024x580-1.jpg');
             background-size: cover;
             background-position: center 30%;
             height: 380px;
             box-shadow: 0 40px 100px -20px rgba(0,0,0,0.8);
-        }
-
-        .banner-cs16 {
-            background-image: url('https://blog.neshastore.com/wp-content/uploads/2024/10/glock-18-elemental-de-agua-1024x576.png');
-            background-size: cover;
-            background-position: center;
         }
 
         .hero-title-vip {
@@ -250,11 +309,10 @@
             background: linear-gradient(to bottom, #fff 30%, var(--gold-primary) 60%, var(--gold-secondary) 90%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
             line-height: 0.85;
         }
 
-        /* RULETA */
+        /* Roulette */
         .roulette-wrapper {
             position: relative;
             width: 100%;
@@ -293,32 +351,25 @@
             align-items: center;
             justify-content: center;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
             cursor: pointer;
+            overflow: hidden;
         }
 
-        /* EFECTO ZOOM AL DIRECCIONAR (HOVER) AGENTES */
         .roulette-item:hover {
             transform: scale(1.1);
-            z-index: 10;
-            border-color: var(--gold-primary);
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
             background: #1c1c30;
+            border-color: rgba(255, 215, 0, 0.4);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+            z-index: 50;
         }
 
         .roulette-item img {
-            width: auto;
-            height: auto;
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain; /* Corregido: Mantiene proporción sin estirar */
-            transition: transform 0.4s ease;
-            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+            transition: transform 0.5s ease, filter 0.5s ease;
         }
 
         .roulette-item:hover img {
-            transform: scale(1.1);
+            transform: scale(1.15) translateY(-5px);
+            filter: brightness(1.2) drop-shadow(0 10px 15px rgba(0,0,0,0.5));
         }
 
         .btn-gold {
@@ -330,13 +381,6 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: all 0.3s ease;
-            box-shadow: 0 10px 20px rgba(184, 134, 11, 0.3);
-        }
-
-        .btn-gold:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(184, 134, 11, 0.5);
-            filter: brightness(1.1);
         }
 
         #notification {
@@ -349,11 +393,9 @@
             border-radius: 8px;
             color: white;
             font-size: 13px;
-            font-weight: 600;
             transform: translateX(120%);
             transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 1000;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
         #notification.show { transform: translateX(0); }
@@ -361,22 +403,23 @@
 </head>
 <body class="custom-scrollbar">
 
-    <div id="notification">Inicia sesión para acceder al catálogo VIP.</div>
+    <div id="notification">Bienvenido al área VIP.</div>
 
     <nav class="bg-[#0a0a14]/90 backdrop-blur-md px-10 flex items-center justify-between border-b border-white/5 sticky top-0 z-50 h-[86px]">
         <div class="flex items-center h-full">
-            <div class="flex items-center cursor-pointer mr-12" onclick="showPage('store')">
-                <div class="bg-gradient-to-br from-yellow-400 to-yellow-700 p-2.5 rounded-2xl mr-4 shadow-lg shadow-yellow-900/20">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="black"><path d="M12 2L4.5 20.29L5.21 21L12 18L18.79 21L19.5 20.29L12 2Z"/></svg>
-                </div>
+            <div class="flex items-center cursor-pointer mr-12 group brand-container" onclick="showPage('store')">
+                <img src="https://vokotrades.com/img/logo_black.png" alt="Logo" class="brand-logo-img mr-6">
+                
                 <div class="logo-text">
-                    SK<span class="inline-flex mx-1"><svg class="knife-svg" viewBox="0 0 24 24" fill="#ffd700"><path d="M21.7,2.3c-0.4-0.4-1-0.4-1.4,0l-5.1,5.1c-0.6-0.3-1.3-0.5-2.1-0.5c-2.5,0-4.5,2-4.5,4.5c0,0.8,0.2,1.5,0.5,2.1L2,21.1c-0.4,0.4-0.4,1,0,1.4s1,0.4,1.4,0l7.6-7.6c0.6,0.3,1.3,0.5,2.1,0.5c2.5,0,4.5-2,4.5-4.5c0-0.8-0.2-1.5-0.5-2.1l5.1-5.1C22.1,3.3,22.1,2.7,21.7,2.3z"/></svg></span>N.LAN
+                    SK
+                    <svg class="knife-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M488.7 18.6L307.3 199.9c-1.8-4.6-4.6-8.7-8.3-12L258 147c-13.1-13.1-34.4-13.1-47.5 0s-13.1 34.4 0 47.5l40.9 40.9c3.3 3.3 7.1 5.8 11.2 7.6L22.9 484.7c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0L247.5 277.9c1.8 4.1 4.4 7.9 7.6 11.2l40.9 40.9c13.1 13.1 34.4 13.1 47.5 0s13.1-34.4 0-47.5L302.6 241.6c-3.3-3.7-7.4-6.5-12-8.3L472 52.6l40-24-23.3-10zM196.2 368.1l-52.4-52.4 31.8-31.8 52.4 52.4-31.8 31.8z"/>
+                    </svg>
+                    N.LAN
                 </div>
             </div>
             <div class="flex items-center h-full ml-4 relative" id="tabs-nav">
-                <!-- Barra Amarilla Deslizante -->
                 <div id="nav-indicator"></div>
-                
                 <div class="game-section-tab active" id="tab-csgo" onclick="showGameSection('csgo')"><span class="tab-text">CS-GO</span></div>
                 <div class="game-section-tab" id="tab-cs16" onclick="showGameSection('cs16')"><span class="tab-text">CS-1.6</span></div>
             </div>
@@ -387,12 +430,12 @@
                 <div class="points-badge">
                     <div class="w-2.5 h-2.5 bg-yellow-400 rounded-full animate-pulse shadow-[0_0_10px_#ffd700]"></div>
                     <div class="flex flex-col">
-                        <span class="text-[8px] text-yellow-500/80 font-black uppercase">Créditos VIP</span>
-                        <span class="text-sm font-bold text-white tracking-wide" id="user-balance-display">$ 0</span>
+                        <span class="text-[8px] text-yellow-500/80 font-black uppercase tracking-wider">Créditos VIP</span>
+                        <span class="text-sm font-bold text-white" id="user-balance-display">$ 0</span>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
-                    <span class="text-[11px] font-black text-white/40 uppercase tracking-widest border-l border-white/10 pl-6">Member: <span class="text-yellow-500">Xican.net</span></span>
+                    <span class="text-[11px] font-black text-white/40 uppercase tracking-widest border-l border-white/10 pl-6">Miembro: <span class="text-yellow-500">Xican.net</span></span>
                     <button onclick="logout()" class="text-[9px] text-gray-500 hover:text-white uppercase transition-colors">Salir</button>
                 </div>
             </div>
@@ -402,21 +445,44 @@
 
     <div class="main-layout">
         <aside class="w-80 p-10 hidden md:block bg-[#08080f] border-r border-white/5 h-full overflow-y-auto custom-scrollbar">
-            <div class="mb-12">
+            <div class="mb-10">
                 <p class="text-[10px] text-yellow-500/50 font-black uppercase tracking-[0.3em] mb-4">Categorías</p>
-                <div class="space-y-2">
-                    <div class="sidebar-item active uppercase font-bold">Todos los Objetos</div>
+                <div class="group">
+                    <div class="sidebar-item active uppercase font-bold flex items-center justify-between">
+                        Todos los Objetos
+                        <svg class="w-3 h-3 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                    <div class="overflow-hidden transition-all duration-500 max-h-0 group-hover:max-h-72 mt-2 space-y-1">
+                        <div class="sidebar-item">Pistolas</div>
+                        <div class="sidebar-item">Subfusiles</div>
+                        <div class="sidebar-item">Snipers</div>
+                        <div class="sidebar-item">Cuchillos</div>
+                    </div>
                 </div>
             </div>
 
-            <div>
-                <p class="text-[10px] text-yellow-500/50 font-black uppercase tracking-[0.3em] mb-4">Filtrar por Rareza</p>
-                <div class="space-y-3">
-                    <div class="flex items-center gap-3 text-[10px] font-bold text-gray-400 hover:text-white cursor-pointer transition-colors group">
-                        <div class="w-2 h-2 rounded-full bg-yellow-500 shadow-[0_0_8px_#ffd700]"></div> CONTRABANDO
+            <div class="mb-12">
+                <p class="text-[10px] text-yellow-500/50 font-black uppercase tracking-[0.3em] mb-4">Rarezas</p>
+                <div class="space-y-1">
+                    <div class="sidebar-item hover:text-white uppercase font-bold" onclick="filterRarity('rare')">
+                        <div class="rarity-dot bg-[#4b69ff] shadow-[0_0_8px_#4b69ff]"></div>
+                        Militar Grade
                     </div>
-                    <div class="flex items-center gap-3 text-[10px] font-bold text-gray-400 hover:text-white cursor-pointer transition-colors">
-                        <div class="w-2 h-2 rounded-full bg-orange-500 shadow-[0_0_8px_#f97316]"></div> LEGENDARIO
+                    <div class="sidebar-item hover:text-white uppercase font-bold" onclick="filterRarity('mythical')">
+                        <div class="rarity-dot bg-[#8847ff] shadow-[0_0_8px_#8847ff]"></div>
+                        Restricted
+                    </div>
+                    <div class="sidebar-item hover:text-white uppercase font-bold" onclick="filterRarity('classified')">
+                        <div class="rarity-dot bg-[#d32ce6] shadow-[0_0_8px_#d32ce6]"></div>
+                        Classified
+                    </div>
+                    <div class="sidebar-item hover:text-white uppercase font-bold" onclick="filterRarity('ancient')">
+                        <div class="rarity-dot bg-[#eb4b4b] shadow-[0_0_8px_#eb4b4b]"></div>
+                        Covert
+                    </div>
+                    <div class="sidebar-item hover:text-white uppercase font-bold" onclick="filterRarity('contraband')">
+                        <div class="rarity-dot bg-[#e4ae39] shadow-[0_0_8px_#e4ae39]"></div>
+                        Contraband
                     </div>
                 </div>
             </div>
@@ -424,17 +490,17 @@
 
         <div class="scrollable-content custom-scrollbar" id="content-container">
             <section id="store-section" class="p-10 page-section">
-                <div class="banner-container">
+                <div class="banner-container" style="background-image: url('https://blix.gg/blog/wp-content/uploads/2025/05/sdfg-1024x580-1.jpg');">
                     <div class="relative z-10 p-20 h-full flex flex-col justify-center bg-gradient-to-r from-black via-black/80 to-transparent">
                         <div class="flex items-center gap-3 mb-6">
                             <span class="w-12 h-[1px] bg-yellow-500"></span>
                             <span class="text-xs font-black text-yellow-500 uppercase tracking-[0.4em]">Diamond Member Club</span>
                         </div>
                         <h2 class="hero-title-vip italic uppercase mb-6">Arsenal<br>Royale</h2>
-                        <p class="text-gray-200 font-medium max-w-md text-sm leading-relaxed mb-8 opacity-90">
-                            Piezas únicas de colección para jugadores de alto nivel. Exclusividad garantizada en cada adquisición.
+                        <p class="text-gray-200 font-medium max-w-md text-sm opacity-90 mb-8">
+                            Los objetos más exclusivos para jugadores de alto nivel.
                         </p>
-                        <button class="btn-gold w-fit px-12">Explorar Rarezas</button>
+                        <button class="btn-gold w-fit px-12">Ver Rarezas</button>
                     </div>
                 </div>
 
@@ -446,9 +512,9 @@
             </section>
 
             <section id="cs16-section" class="p-10 page-section hidden-section">
-                <div class="banner-container banner-cs16 mb-12 border-emerald-500/20 bg-[#050b08]">
+                <div class="banner-container bg-[#050b08]" style="background-image: url('https://blog.neshastore.com/wp-content/uploads/2024/10/glock-18-elemental-de-agua-1024x576.png');">
                     <div class="relative z-10 p-20 w-full h-full flex flex-col justify-center bg-gradient-to-r from-black via-black/60 to-transparent">
-                        <h2 class="text-7xl font-black italic uppercase text-white mb-6 drop-shadow-2xl">CS 1.6<br><span class="text-emerald-500">LEGACY</span></h2>
+                        <h2 class="text-7xl font-black italic uppercase text-white mb-6">CS 1.6<br><span class="text-emerald-500">LEGACY</span></h2>
                         <button class="bg-emerald-600 hover:bg-emerald-500 text-black px-10 py-4 rounded-xl font-black uppercase text-xs w-fit transition-all">Ver Colección</button>
                     </div>
                 </div>
@@ -456,13 +522,13 @@
             </section>
 
             <section id="login-section" class="page-section hidden-section flex items-center justify-center min-h-full p-6">
-                <div class="bg-[#0f0f1a] border border-yellow-500/10 w-full max-w-lg p-14 rounded-[2.5rem] text-center shadow-[0_50px_100px_-20px_rgba(0,0,0,0.9)]">
+                <div class="bg-[#0f0f1a] border border-yellow-500/10 w-full max-w-lg p-14 rounded-[2.5rem] text-center shadow-2xl">
                     <h2 class="text-4xl font-black italic uppercase mb-2 text-white">VIP Lounge</h2>
-                    <p class="text-yellow-500/50 text-[10px] font-black uppercase tracking-[0.3em] mb-12">Solo miembros autorizados</p>
+                    <p class="text-yellow-500/50 text-[10px] font-black uppercase tracking-[0.3em] mb-12">Solo para personal autorizado</p>
                     <form class="space-y-6" onsubmit="handleLogin(event)">
                         <input type="text" id="username" placeholder="Usuario" class="w-full bg-white/5 border border-white/5 p-5 rounded-2xl text-white outline-none focus:border-yellow-500/50 transition-all text-sm" required>
-                        <input type="password" id="password" placeholder="Clave de Seguridad" class="w-full bg-white/5 border border-white/5 p-5 rounded-2xl text-white outline-none focus:border-yellow-500/50 transition-all text-sm" required>
-                        <button type="submit" class="btn-gold w-full py-5 text-sm">Validar Credenciales</button>
+                        <input type="password" id="password" placeholder="Clave" class="w-full bg-white/5 border border-white/5 p-5 rounded-2xl text-white outline-none focus:border-yellow-500/50 transition-all text-sm" required>
+                        <button type="submit" class="btn-gold w-full py-5 text-sm">Validar</button>
                     </form>
                 </div>
             </section>
@@ -483,26 +549,21 @@
         ];
 
         const skinsCS16 = [
-            { id: 100, name: "Howl | Legacy Edition", price: 5000, rarity: "glow-contraband", isPresentation: true, imgs: ["https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_m4a1_cu_m4a1_howling_light_large.c64a9fc9fa04b5d10d4b1e200135e59285c8a77c.png", "https://all-cs.ru/storage/styles/medium_size/public/screenshots/cs16/m4a4-howl-w-stickers.jpg?itok=hVnv6D9o"] },
-            { id: 101, name: "Glock-18 | Water Elemental", price: 5000, rarity: "glow-classified", isPresentation: true, imgs: ["https://static.g4skins.com/items/730_2/glock-18-water-elemental-(field-tested).png?v=4", "https://all-cs.ru/storage/styles/medium_size/public/screenshots/cs16/glock-water-elemental.jpg?itok=g3m_HQqw"] }
+            { id: 100, name: "Howl | Legacy Edition", price: 5000, rarity: "glow-contraband", isPresentation: true, imgs: ["https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_m4a1_cu_m4a1_howling_light_large.c64a9fc9fa04b5d10d4b1e200135e59285c8a77c.png", "https://all-cs.ru/storage/styles/medium_size/public/screenshots/cs16/m4a4-howl-w-stickers.jpg?itok=hVnv6D9o"] }
         ];
 
         const agents = [
             "https://assets.lis-skins.com/blogfiles/zl8VMOrs66G2Xkh2KJsroIcKO1r3ICdXjOWBkhNR.png",
             "https://steamcommunity-a.akamaihd.net/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXA6Q1NL4kmrAlOA0_FVPCi2t_fUkRxNztDu4W1Iwhl3frQTitD_tW3mpSM2fXyY7-Fx2kJ7Z0hjOqTp9v32ge1_kRqNzv7I4TDcwE-YVjQ_Vm2kOjxxcjryget60M/310fx238f",
-            "https://key-drop.com/blog/wp-content/uploads/2024/11/Soldier-Phoenix.png",
-            "https://static.wikia.nocookie.net/cswikia/images/1/1c/Guerrilla_warfare_variantf.png",
-            "https://key-drop.com/blog/wp-content/uploads/2024/11/Lt.-Commander-Ricksaw-NSWC-SEAL.png"
+            "https://key-drop.com/blog/wp-content/uploads/2024/11/Soldier-Phoenix.png"
         ];
 
         function moveNavIndicator() {
             const activeTab = document.querySelector('.game-section-tab.active');
             const indicator = document.getElementById('nav-indicator');
             if (activeTab && indicator) {
-                const left = activeTab.offsetLeft;
-                const width = activeTab.offsetWidth;
-                indicator.style.left = `${left + (width * 0.15)}px`;
-                indicator.style.width = `${width * 0.7}px`;
+                indicator.style.left = `${activeTab.offsetLeft + (activeTab.offsetWidth * 0.15)}px`;
+                indicator.style.width = `${activeTab.offsetWidth * 0.7}px`;
             }
         }
 
@@ -512,7 +573,7 @@
             let content = "";
             const fullSet = [...agents, ...agents, ...agents, ...agents, ...agents, ...agents];
             fullSet.forEach(imgUrl => {
-                content += `<div class="roulette-item"><img src="${imgUrl}"></div>`;
+                content += `<div class="roulette-item"><img src="${imgUrl}" class="max-h-[90%] max-w-[90%] object-contain"></div>`;
             });
             rail.innerHTML = content; 
         }
@@ -528,7 +589,7 @@
                 const startTime = performance.now();
                 function update(currentTime) {
                     const elapsed = currentTime - startTime;
-                    const progress = Math.min(elapsed / 2000, 1);
+                    const progress = Math.min(elapsed / 1500, 1);
                     displayedBalance = startValue + (balance - startValue) * progress;
                     document.getElementById('user-balance-display').innerText = formatCurrency(displayedBalance);
                     if (progress < 1) requestAnimationFrame(update);
@@ -538,10 +599,8 @@
         }
 
         function renderSkins() {
-            const grid = document.getElementById('skin-grid');
-            if(grid) grid.innerHTML = skins.map(skin => renderSkinCard(skin)).join('');
-            const grid16 = document.getElementById('skin-grid-cs16');
-            if(grid16) grid16.innerHTML = skinsCS16.map(skin => renderSkinCard(skin)).join('');
+            document.getElementById('skin-grid').innerHTML = skins.map(s => renderSkinCard(s)).join('');
+            document.getElementById('skin-grid-cs16').innerHTML = skinsCS16.map(s => renderSkinCard(s)).join('');
         }
 
         function renderSkinCard(skin) {
@@ -550,8 +609,8 @@
                 <div class="skin-card group ${isOwned ? 'owned' : ''}">
                     <div class="buy-overlay">
                         ${isOwned ? 
-                            `<button class="bg-white/10 text-white/40 px-8 py-4 rounded-xl font-black uppercase text-xs cursor-not-allowed">Adquirido</button>` :
-                            `<button onclick="buySkin(${skin.id}, ${skin.price})" class="btn-gold text-xs">Comprar Item</button>`
+                            `<span class="text-white/40 font-black uppercase text-xs">Adquirido</span>` :
+                            `<button onclick="buySkin(${skin.id}, ${skin.price})" class="btn-gold text-xs">Comprar</button>`
                         }
                     </div>
                     <div class="rarity-glow ${skin.rarity}"></div>
@@ -560,10 +619,14 @@
                     </div>
                     <div class="mt-4 border-t border-white/5 pt-4">
                         <div class="text-[9px] text-yellow-500 font-black uppercase tracking-widest mb-1">${skin.name}</div>
-                        <div class="text-lg font-bold text-white">${isOwned ? 'COLECCIÓN' : formatCurrency(skin.price)}</div>
+                        <div class="text-lg font-bold text-white">${isOwned ? 'EN COLECCIÓN' : formatCurrency(skin.price)}</div>
                     </div>
                 </div>
             `;
+        }
+
+        function filterRarity(type) {
+            showNotification(`Filtrando rareza: ${type.toUpperCase()}`);
         }
 
         function showNotification(text) {
@@ -584,45 +647,42 @@
             } else showNotification("Saldo insuficiente.");
         }
 
-        let isTransitioning = false;
         function showPage(pageId) {
-            if (isTransitioning) return;
-            isTransitioning = true;
-
             const sections = ['store-section', 'login-section', 'cs16-section'];
-            const targetId = pageId === 'login' ? 'login-section' : (pageId === 'cs16' ? 'cs16-section' : 'store-section');
-            const currentSection = sections.find(id => !document.getElementById(id).classList.contains('hidden-section'));
+            let targetId = '';
             
-            if (currentSection === targetId) {
-                isTransitioning = false;
-                return;
-            }
+            if (pageId === 'login') targetId = 'login-section';
+            else if (pageId === 'cs16') targetId = 'cs16-section';
+            else targetId = 'store-section';
 
-            if (currentSection) {
-                const currentEl = document.getElementById(currentSection);
-                currentEl.style.opacity = '0';
-                currentEl.style.transform = 'translateY(50px) scale(0.95)';
-            }
+            const currentSection = document.querySelector('.page-section:not(.hidden-section)');
+            const nextSection = document.getElementById(targetId);
 
-            setTimeout(() => {
-                sections.forEach(id => document.getElementById(id).classList.add('hidden-section'));
-                const targetEl = document.getElementById(targetId);
+            if (currentSection && currentSection !== nextSection) {
+                // El apartado actual se desarma y se va a la izquierda
+                currentSection.classList.add('exit-left');
                 
-                targetEl.classList.remove('hidden-section');
-                targetEl.style.opacity = '0';
-                targetEl.style.transform = 'translateY(-30px) scale(1.02)';
-                
-                targetEl.offsetHeight;
-
-                targetEl.style.opacity = '1';
-                targetEl.style.transform = 'translateY(0) scale(1)';
-
                 setTimeout(() => {
-                    targetEl.style.opacity = '';
-                    targetEl.style.transform = '';
-                    isTransitioning = false;
-                }, 600);
-            }, 300);
+                    currentSection.classList.add('hidden-section');
+                    currentSection.classList.remove('exit-left');
+                    
+                    // Preparamos el siguiente apartado para entrar desde la derecha
+                    nextSection.classList.remove('hidden-section');
+                    nextSection.classList.add('enter-right');
+                    
+                    // Forzamos reflow para que la transición de entrada funcione
+                    void nextSection.offsetWidth;
+                    
+                    // El apartado llega desde la derecha y se ensambla
+                    nextSection.classList.remove('enter-right');
+                }, 400); // Mitad de la duración de la transición para un solapamiento suave
+            } else {
+                // Caso inicial o si es el mismo
+                sections.forEach(id => document.getElementById(id).classList.add('hidden-section'));
+                nextSection.classList.remove('hidden-section');
+            }
+
+            moveNavIndicator();
         }
 
         function showGameSection(game) {
@@ -645,7 +705,7 @@
                 document.getElementById('user-info').classList.remove('hidden');
                 updateBalanceUI(true); 
                 showPage('store');
-                showNotification("Acceso VIP concedido");
+                showNotification("Acceso VIP Concedido");
             }
         }
 
@@ -661,7 +721,6 @@
             initRoulette();
             moveNavIndicator(); 
         };
-
         window.onresize = moveNavIndicator;
     </script>
 </body>
