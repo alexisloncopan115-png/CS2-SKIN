@@ -34,19 +34,15 @@
             transition: 
                 opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
                 transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-                filter 0.5s ease,
-                clip-path 0.7s cubic-bezier(0.77, 0, 0.175, 1);
+                filter 0.5s ease;
             opacity: 1;
             transform: translateX(0);
-            filter: blur(0px);
-            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
         }
 
         .exit-left {
             opacity: 0;
-            filter: blur(10px) brightness(1.5);
-            transform: translateX(-80px) scale(0.95);
-            clip-path: polygon(0% 15%, 25% 0%, 55% 20%, 80% 0%, 100% 15%, 90% 50%, 100% 85%, 75% 100%, 45% 80%, 20% 100%, 0% 85%, 10% 50%);
+            filter: blur(10px);
+            transform: translateX(-80px);
             pointer-events: none;
         }
 
@@ -54,7 +50,6 @@
             opacity: 0;
             transform: translateX(80px);
             filter: blur(10px);
-            clip-path: polygon(15% 0%, 85% 0%, 100% 50%, 85% 100%, 15% 100%, 0% 50%);
         }
 
         .hidden-section { display: none !important; }
@@ -80,27 +75,64 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 6px 0;
+            padding: 8px 0;
             color: #d1d1e0;
             font-size: 13px;
             cursor: pointer;
-            transition: color 0.2s;
+            transition: all 0.2s;
+            position: relative;
         }
 
         .filter-item:hover { color: white; }
 
+        /* --- Submenús para Filtros --- */
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+            opacity: 0;
+            padding-left: 12px;
+            border-left: 1px solid rgba(99, 102, 241, 0.2);
+            margin-left: 4px;
+        }
+
+        .filter-item-parent:hover .submenu {
+            max-height: 250px;
+            opacity: 1;
+            margin-top: 4px;
+            margin-bottom: 8px;
+        }
+
+        .submenu-item {
+            padding: 6px 0;
+            font-size: 12px;
+            color: var(--text-muted);
+            transition: color 0.2s;
+            display: block;
+        }
+
+        .submenu-item:hover {
+            color: var(--accent-purple);
+        }
+
+        .arrow-icon {
+            transition: transform 0.3s;
+            font-size: 10px;
+            opacity: 0.5;
+        }
+
+        .filter-item-parent:hover .arrow-icon {
+            transform: rotate(180deg);
+            color: var(--accent-purple);
+            opacity: 1;
+        }
+
         .search-bar {
             background: #1a1a2e;
             border: 1px solid var(--border-color);
-            transition: all 0.2s;
         }
 
-        .search-bar:focus-within {
-            border-color: var(--accent-purple);
-            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
-        }
-
-        /* --- Tarjetas de Skin con Zoom --- */
+        /* --- Tarjetas de Skin --- */
         .skin-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -116,10 +148,18 @@
             overflow: hidden;
         }
 
-        .skin-card:hover {
+        .skin-card:not(.obtained):hover {
             border-color: rgba(99, 102, 241, 0.5);
             transform: scale(1.05);
             z-index: 10;
+        }
+
+        .skin-card.obtained {
+            opacity: 0.5;
+            cursor: not-allowed !important;
+            filter: grayscale(1) brightness(0.7);
+            border-color: transparent;
+            pointer-events: none;
         }
 
         .skin-rarity-bar {
@@ -153,11 +193,8 @@
 
         .btn-primary {
             background: var(--accent-purple);
-            transition: filter 0.2s;
         }
-        .btn-primary:hover { filter: brightness(1.2); }
         
-        /* Botón comprar absoluto */
         .btn-buy-card {
             position: absolute;
             bottom: 12px;
@@ -177,27 +214,130 @@
             z-index: 20;
         }
         
-        .skin-card:hover .btn-buy-card {
+        .skin-card:not(.obtained):hover .btn-buy-card {
             opacity: 1;
             transform: translateY(0);
             pointer-events: auto;
         }
 
-        /* Ocultar info inferior cuando el botón aparece */
         .card-info-content {
             transition: opacity 0.2s ease;
         }
-        .skin-card:hover .card-info-content {
+        .skin-card:not(.obtained):hover .card-info-content {
             opacity: 0;
+        }
+
+        /* Modal de Detalle Renovado */
+        #detail-modal {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #detail-modal.flex {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #modal-container {
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        #detail-modal.flex #modal-container {
+            transform: scale(1) translateY(0);
+        }
+
+        #modal-rarity-bg {
+            transition: background 0.8s ease;
+        }
+
+        /* Animación de descuento de saldo */
+        .balance-changing {
+            color: #f87171 !important;
+            animation: pulse-red 0.3s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        /* Avatar styling */
+        .user-avatar-container {
+            width: 40px;
+            height: 40px;
+            border-radius: 9999px;
+            overflow: hidden;
+            border: 2px solid rgba(99, 102, 241, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1a1a2e;
+        }
+
+        .user-avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Float animation for modal image */
+        @keyframes modal-float {
+            0%, 100% { transform: translateY(0) scale(1.25); }
+            50% { transform: translateY(-10px) scale(1.3); }
+        }
+        #modal-img {
+            animation: modal-float 4s ease-in-out infinite;
         }
     </style>
 </head>
 <body class="flex flex-col">
 
+    <!-- Modal de Detalle de Compra -->
+    <div id="detail-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4" onclick="if(event.target === this) closeModal()">
+        <div id="modal-container" class="bg-[#151521] border border-white/10 w-full max-w-2xl rounded-3xl overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col md:flex-row relative">
+            <div class="w-full md:w-1/2 p-8 flex items-center justify-center bg-gradient-to-b from-white/5 to-transparent relative overflow-hidden">
+                <div id="modal-rarity-bg" class="absolute inset-0 opacity-20"></div>
+                <img id="modal-img" src="" class="max-w-full drop-shadow-[0_0_40px_rgba(255,255,255,0.2)] transition-transform duration-700">
+            </div>
+            <div class="w-full md:w-1/2 p-8 flex flex-col">
+                <div class="flex justify-between items-start mb-4">
+                    <span id="modal-wear" class="px-2 py-1 bg-white/10 rounded text-[10px] font-bold tracking-widest uppercase"></span>
+                    <button onclick="closeModal()" class="text-white/40 hover:text-white transition-colors bg-white/5 p-1 rounded-full"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+                </div>
+                <h2 id="modal-name" class="text-2xl font-black italic leading-tight mb-2"></h2>
+                <div id="modal-rarity-text" class="text-[10px] font-black uppercase tracking-[0.2em] mb-6"></div>
+                
+                <div class="space-y-4 mb-8">
+                    <div class="flex justify-between border-b border-white/5 pb-2">
+                        <span class="text-muted text-xs">Precio SKIN.LAN</span>
+                        <span id="modal-price" class="font-black text-indigo-400"></span>
+                    </div>
+                    <div class="flex justify-between border-b border-white/5 pb-2">
+                        <span class="text-muted text-xs">Rareza Técnica</span>
+                        <span id="modal-rarity-type" class="text-white text-xs font-bold uppercase"></span>
+                    </div>
+                </div>
+
+                <div class="mt-auto flex flex-col gap-3">
+                    <div id="modal-error" class="text-red-500 text-[10px] font-bold text-center hidden uppercase tracking-widest">Saldo insuficiente para esta operación</div>
+                    <div class="flex gap-3">
+                        <button onclick="closeModal()" class="flex-1 py-4 bg-white/5 hover:bg-white/10 rounded-xl font-bold text-xs transition-all">DESCARTAR</button>
+                        <button id="modal-confirm-btn" class="flex-2 px-8 py-4 bg-indigo-600 rounded-xl font-black text-xs shadow-lg shadow-indigo-600/30 transition-all hover:scale-105 active:scale-95">CONFIRMAR PAGO</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <header class="h-16 border-b border-white/5 bg-[#0f0f18] px-6 flex items-center justify-between z-50">
         <div class="flex items-center gap-8">
             <div class="flex items-center gap-2 cursor-pointer group" onclick="showPage('store')">
-                <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center font-black text-xl italic">S</div>
+                <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center font-black text-xl italic group-hover:scale-110 transition-transform">S</div>
                 <span class="font-black text-lg tracking-tighter">SKIN.LAN</span>
             </div>
             <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-muted">
@@ -214,12 +354,14 @@
                     <p class="text-[10px] text-muted font-bold uppercase leading-none" id="user-display-name">Usuario</p>
                     <div class="flex items-center gap-1 justify-end">
                         <span class="text-[9px] text-indigo-400 font-bold">CS POINTS</span>
-                        <p class="text-sm font-black text-white" id="balance-val">$0.00</p>
+                        <p class="text-sm font-black text-white tabular-nums" id="balance-val">$0.00</p>
                     </div>
                 </div>
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 border border-white/20"></div>
+                <div class="user-avatar-container">
+                    <img id="user-avatar-img" src="https://i.pinimg.com/736x/77/23/25/77232591af786f08fc956657fcaafb91.jpg" class="user-avatar-img" alt="Avatar">
+                </div>
             </div>
-            <button id="login-btn" onclick="showPage('login')" class="btn-primary px-5 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+            <button id="login-btn" onclick="showPage('login')" class="btn-primary px-5 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:brightness-110 transition-all">
                 <img src="https://img.icons8.com/ios-filled/50/ffffff/steam.png" class="w-4 h-4">
                 Inicia sesión con Steam
             </button>
@@ -235,46 +377,78 @@
                 <input type="text" placeholder="Max" class="w-1/2 bg-[#1a1a2e] border border-white/5 p-2 rounded text-xs">
             </div>
             <div class="filter-group">
-                <div class="sidebar-filter-label">Tipo</div>
-                <div class="filter-item">Cuchillos <span><svg class="w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg></span></div>
-                <div class="filter-item">Rifles</div>
-                <div class="filter-item">Guantes</div>
-            </div>
-            <div class="filter-group">
-                <div class="sidebar-filter-label">Rareza</div>
-                <div class="filter-item">Contrabando <div class="w-2 h-2 rounded-full bg-yellow-500"></div></div>
-                <div class="filter-item">Encubierto <div class="w-2 h-2 rounded-full bg-red-500"></div></div>
-                <div class="filter-item">Clasificado <div class="w-2 h-2 rounded-full bg-purple-500"></div></div>
+                <div class="sidebar-filter-label">Tipo de Arma</div>
+                
+                <!-- Cuchillos con Submenú -->
+                <div class="filter-item-parent">
+                    <div class="filter-item">
+                        <div class="flex items-center gap-2">
+                            <span>Cuchillos</span>
+                            <span class="arrow-icon">▼</span>
+                        </div>
+                        <span class="text-[9px] bg-white/5 px-2 py-1 rounded">2</span>
+                    </div>
+                    <div class="submenu">
+                        <a href="#" class="submenu-item">1. M9 Bayonet</a>
+                        <a href="#" class="submenu-item">2. Butterfly</a>
+                    </div>
+                </div>
+
+                <!-- Rifles con Submenú -->
+                <div class="filter-item-parent">
+                    <div class="filter-item">
+                        <div class="flex items-center gap-2">
+                            <span>Rifles</span>
+                            <span class="arrow-icon">▼</span>
+                        </div>
+                        <span class="text-[9px] bg-white/5 px-2 py-1 rounded">4</span>
+                    </div>
+                    <div class="submenu">
+                        <a href="#" class="submenu-item">1. AK-47</a>
+                        <a href="#" class="submenu-item">2. M4A1-S</a>
+                        <a href="#" class="submenu-item">3. M4A4</a>
+                        <a href="#" class="submenu-item">4. FAMAS</a>
+                    </div>
+                </div>
+
+                <!-- Pistolas con Submenú -->
+                <div class="filter-item-parent">
+                    <div class="filter-item">
+                        <div class="flex items-center gap-2">
+                            <span>Pistolas</span>
+                            <span class="arrow-icon">▼</span>
+                        </div>
+                        <span class="text-[9px] bg-white/5 px-2 py-1 rounded">3</span>
+                    </div>
+                    <div class="submenu">
+                        <a href="#" class="submenu-item">1. Glock-18</a>
+                        <a href="#" class="submenu-item">2. USP-S</a>
+                        <a href="#" class="submenu-item">3. Desert Eagle</a>
+                    </div>
+                </div>
             </div>
         </aside>
 
-        <main class="flex-1 flex flex-col min-w-0">
+        <main class="flex-1 flex flex-col min-w-0" id="main-content">
             <div class="p-6 border-b border-white/5 flex flex-wrap gap-4 items-center bg-[#0b0b12]">
-                <div class="search-bar flex-1 min-w-[300px] h-11 rounded-xl flex items-center px-4 gap-3">
+                <div class="search-bar flex-1 min-w-[300px] h-11 rounded-xl flex items-center px-4 gap-3 border border-white/5">
                     <svg class="w-5 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" placeholder="Buscar inventario..." class="bg-transparent border-none outline-none text-sm w-full text-white placeholder:text-muted/50">
-                </div>
-                <div class="flex gap-2">
-                    <button class="bg-[#1a1a2e] border border-white/5 px-4 h-11 rounded-xl text-xs font-bold hover:bg-white/5 transition-colors flex items-center gap-2">
-                        Popularidad <svg class="w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
-                    </button>
-                    <button class="bg-[#1a1a2e] border border-white/5 w-11 h-11 rounded-xl flex items-center justify-center hover:bg-white/5">
-                        <svg class="w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/></svg>
-                    </button>
+                    <input type="text" placeholder="Buscar por nombre o colección..." class="bg-transparent border-none outline-none text-sm w-full text-white placeholder:text-muted/50">
                 </div>
             </div>
 
-            <div id="content-area" class="flex-1 overflow-y-auto custom-scroll p-6 relative">
+            <div id="content-area" class="flex-1 overflow-y-auto custom-scroll p-6">
                 <section id="store-section" class="page-section">
                     <div class="bg-gradient-to-r from-indigo-900/40 to-purple-900/40 border border-indigo-500/20 rounded-2xl p-8 mb-8 flex items-center justify-between relative overflow-hidden">
                         <div class="relative z-10">
-                            <h2 class="text-3xl font-black italic mb-2">DONDE LAS LEYENDAS<br>COMPRAN SKINS</h2>
-                            <div class="flex gap-6 mt-4">
-                                <div class="flex items-center gap-2 text-xs font-bold"><span class="text-green-500">✓</span> Sin cargos ocultos</div>
-                                <div class="flex items-center gap-2 text-xs font-bold"><span class="text-green-500">✓</span> Intercambio instantáneo</div>
+                            <h2 class="text-3xl font-black italic mb-2">MERCADO EXCLUSIVO</h2>
+                            <p class="text-muted text-sm font-medium mb-4 max-w-sm">Consigue las mejores skins del mercado con entrega garantizada en menos de 5 segundos.</p>
+                            <div class="flex gap-4">
+                                <div class="px-3 py-1 bg-green-500/20 text-green-500 rounded text-[10px] font-black uppercase">Seguro</div>
+                                <div class="px-3 py-1 bg-indigo-500/20 text-indigo-400 rounded text-[10px] font-black uppercase">Instantáneo</div>
                             </div>
                         </div>
-                        <img src="https://key-drop.com/blog/wp-content/uploads/2024/11/Soldier-Phoenix.png" class="h-48 hidden md:block opacity-80 drop-shadow-2xl">
+                        <img src="https://key-drop.com/blog/wp-content/uploads/2024/11/Soldier-Phoenix.png" class="h-48 hidden md:block opacity-60">
                     </div>
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 pb-12" id="grid-csgo"></div>
                 </section>
@@ -285,29 +459,23 @@
                             <img src="https://img.icons8.com/ios-filled/50/27c467/game-controller.png" class="w-8">
                         </div>
                         <div>
-                            <h2 class="text-2xl font-black italic text-emerald-500">LEGACY COLLECTIONS: CS 1.6</h2>
-                            <p class="text-muted text-sm uppercase font-bold tracking-widest">Modelos clásicos de alta fidelidad</p>
+                            <h2 class="text-2xl font-black italic text-emerald-500">CS 1.6 LEGACY</h2>
+                            <p class="text-muted text-sm uppercase font-bold tracking-widest">Modelos adaptados para motores antiguos</p>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 pb-12" id="grid-cs16"></div>
                 </section>
 
                 <section id="login-section" class="page-section hidden-section flex items-center justify-center py-20">
-                    <div class="bg-[#0f0f18] border border-white/5 p-12 rounded-3xl max-w-md w-full text-center">
+                    <div class="bg-[#0f0f18] border border-white/5 p-12 rounded-3xl max-w-md w-full text-center shadow-2xl">
                         <div class="w-20 h-20 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-4xl font-black italic">S</div>
-                        <h2 class="text-2xl font-black mb-2">Inicio de Sesión</h2>
-                        <p class="text-muted text-sm mb-10">Ingresa tus credenciales para continuar.</p>
+                        <h2 class="text-2xl font-black mb-2">Bienvenido de nuevo</h2>
+                        <p class="text-muted text-sm mb-10">Accede a tu cuenta de operador</p>
                         <form onsubmit="handleLogin(event)" class="space-y-4">
-                            <div class="text-left">
-                                <label class="text-[10px] font-bold text-muted uppercase mb-1 block ml-1">Usuario</label>
-                                <input type="text" id="user-field" placeholder="Ej: Xican.net" class="w-full bg-[#1a1a2e] border border-white/5 p-4 rounded-xl text-sm outline-none focus:border-indigo-500 transition-all">
-                            </div>
-                            <div class="text-left">
-                                <label class="text-[10px] font-bold text-muted uppercase mb-1 block ml-1">Contraseña</label>
-                                <input type="password" id="pass-field" placeholder="••••••••" class="w-full bg-[#1a1a2e] border border-white/5 p-4 rounded-xl text-sm outline-none focus:border-indigo-500 transition-all">
-                            </div>
-                            <div id="login-error" class="text-red-500 text-xs font-bold hidden">Credenciales incorrectas. Inténtalo de nuevo.</div>
-                            <button class="btn-primary w-full py-4 rounded-xl font-bold mt-4 shadow-lg shadow-indigo-500/20">Entrar al Sistema</button>
+                            <input type="text" id="user-field" placeholder="Nombre de Usuario" class="w-full bg-[#1a1a2e] border border-white/5 p-4 rounded-xl text-sm outline-none focus:border-indigo-500 transition-all">
+                            <input type="password" id="pass-field" placeholder="Contraseña" class="w-full bg-[#1a1a2e] border border-white/5 p-4 rounded-xl text-sm outline-none focus:border-indigo-500 transition-all">
+                            <div id="login-error" class="text-red-500 text-xs font-bold hidden">Acceso denegado. Revisa tus credenciales.</div>
+                            <button class="btn-primary w-full py-4 rounded-xl font-black uppercase text-xs tracking-widest mt-4">AUTENTICAR</button>
                         </form>
                     </div>
                 </section>
@@ -316,62 +484,149 @@
     </div>
 
     <script>
-        let balance = 1999999999;
+        let balance = 1999999999.99; 
         let isLoggedIn = false;
         const users = { "Xican.net": "123", "Bladimir": "123" };
+        const defaultAvatar = "https://i.pinimg.com/736x/77/23/25/77232591af786f08fc956657fcaafb91.jpg";
 
         const skinsCSGO = [
-            { name: "AK-47 | Empress", price: 1500, discount: "-5%", wear: "FN", rarity: "#eb4b4b", img: "https://steamcommunity-a.akamaihd.net/economy/image/class/730/2041957405" },
-            { name: "Desert Eagle | Printstream", price: 850, discount: "-10%", wear: "FN", rarity: "#eb4b4b", img: "https://blix.gg/blog/wp-content/uploads/2024/10/c2dde3ce98c7e28b.png" },
-            { name: "AWP | Neo-Noir", price: 120, discount: "-8%", wear: "MW", rarity: "#eb4b4b", img: "https://steamcommunity-a.akamaihd.net/economy/image/class/730/1703417002" },
-            { name: "M4A4 | Poseidon", price: 1250, discount: "-15%", wear: "FN", rarity: "#eb4b4b", img: "https://steamcommunity-a.akamaihd.net/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL1m5fn8Sdk7OeRbKFsJ8-DHG6e1f1iouRoQha-kBkupjDLz9_6c3mWPFBxX8N0EOMIsULpmtHjPuvq41bc2dhAzy3_2ngfvHpt5_FCD_RJLjxjaQ/256fx256f" },
-            { name: "AWP | Fade", price: 950, discount: "-5%", wear: "FN", rarity: "#eb4b4b", img: "https://steamcommunity-a.akamaihd.net/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1P7vG6YadsLM-QG1iY1OBio-xoQRa_mg8ijDCAnobsLGWTPA8iWJUjQbMP5hi4k9fgMuLl5FDbgt5HxSSs3S5JvS1o4-lTVPAs5OSJ2GZD4EWV/256fx256f" },
-            { name: "Butterfly | Gamma Fade", price: 2100, discount: "-2%", wear: "FN", rarity: "#eb4b4b", img: "https://steamcommunity-a.akamaihd.net/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlPPNSIeOaB2qf19F7teVgWiT9x01x623cmd2rcXKQbw4oA8dzReEK5EK6kNO2NOO04FeIjYJCmyr4jzQJsHiu1I77Gg/256fx256f" },
-            { name: "AWP | Silk Tiger", price: 820, discount: "-10%", wear: "MW", rarity: "#eb4b4b", img: "https://steamcommunity-a.akamaihd.net/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1I-_uibbB5L8-SAFiEyOlzot5mXSi9khgYvzSCkpu3JyjBawQkXsF0EeEO4Ea_m93iNLjk71PfjtlDxSms3S1M7yhj47wLA71lpPOYHm96Lg/256fx256f" },
-            { name: "M4A4 | Eye of Athena", price: 210, discount: "-5%", wear: "FN", rarity: "#eb4b4b", img: "https://steamcommunity-a.akamaihd.net/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_GSMWGRxetJvbVoHjqMmRQguynLm92pci2WagEkC5Z5Q7VetkbukIXjNrnm5QPbjt8WxS-vii4b5i5v4fFCD_TfxF4xWg/256fx256f" },
-            // NOVENA CUADRICULA: Imagen personalizada solicitada
-            { name: "M4A4 | Howl", price: 12400, discount: "-5%", wear: "FN", rarity: "#e4ae39", img: "https://steamcommunity-a.akamaihd.net/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_jdk7uW-V6V-Kf2cGFiYxO9gqa9sSS_mwR4h4D6Az9ardyqQa1NyDpIkTOBb5ES7wYDiMOyz4lPf2YsX02yg2Ubsh123/256fx256f" }
+            { id: 1, name: "AK-47 | Empress", price: 1500, discount: "-5%", wear: "FN", rarity: "#eb4b4b", img: "https://steamcommunity-a.akamaihd.net/economy/image/class/730/2041957405", obtained: false },
+            { id: 2, name: "Desert Eagle | Printstream", price: 850, discount: "-10%", wear: "FN", rarity: "#eb4b4b", img: "https://blix.gg/blog/wp-content/uploads/2024/10/c2dde3ce98c7e28b.png", obtained: false },
+            { id: 3, name: "AWP | Neo-Noir", price: 120, discount: "-8%", wear: "MW", rarity: "#eb4b4b", img: "https://steamcommunity-a.akamaihd.net/economy/image/class/730/1703417002", obtained: false },
+            { id: 4, name: "M4A4 | Poseidon", price: 1250, discount: "-15%", wear: "FN", rarity: "#eb4b4b", img: "https://steamcommunity-a.akamaihd.net/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL1m5fn8Sdk7OeRbKFsJ8-DHG6e1f1iouRoQha-kBkupjDLz9_6c3mWPFBxX8N0EOMIsULpmtHjPuvq41bc2dhAzy3_2ngfvHpt5_FCD_RJLjxjaQ/256fx256f", obtained: false },
+            { id: 5, name: "AWP | Fade", price: 950, discount: "-5%", wear: "FN", rarity: "#eb4b4b", img: "https://steamcommunity-a.akamaihd.net/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1P7vG6YadsLM-QG1iY1OBio-xoQRa_mg8ijDCAnobsLGWTPA8iWJUjQbMP5hi4k9fgMuLl5FDbgt5HxSSs3S5JvS1o4-lTVPAs5OSJ2GZD4EWV/256fx256f", obtained: false },
+            { id: 6, name: "Butterfly | Gamma Fade", price: 2100, discount: "-2%", wear: "FN", rarity: "#eb4b4b", img: "https://steamcommunity-a.akamaihd.net/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwlcK3wiFO0POlPPNSIeOaB2qf19F7teVgWiT9x01x623cmd2rcXKQbw4oA8dzReEK5EK6kNO2NOO04FeIjYJCmyr4jzQJsHiu1I77Gg/256fx256f", obtained: false },
+            { id: 7, name: "AWP | Silk Tiger", price: 820, discount: "-10%", wear: "MW", rarity: "#eb4b4b", img: "https://steamcommunity-a.akamaihd.net/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1I-_uibbB5L8-SAFiEyOlzot5mXSi9khgYvzSCkpu3JyjBawQkXsF0EeEO4Ea_m93iNLjk71PfjtlDxSms3S1M7yhj47wLA71lpPOYHm96Lg/256fx256f", obtained: false },
+            { id: 8, name: "M4A4 | Eye of Athena", price: 210, discount: "-5%", wear: "FN", rarity: "#eb4b4b", img: "https://steamcommunity-a.akamaihd.net/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL8ypexwjFS4_ega6F_H_GSMWGRxetJvbVoHjqMmRQguynLm92pci2WagEkC5Z5Q7VetkbukIXjNrnm5QPbjt8WxS-vii4b5i5v4fFCD_TfxF4xWg/256fx256f", obtained: false },
+            { id: 9, name: "M4A4 | Howl", price: 12400, discount: "-5%", wear: "FN", rarity: "#e4ae39", img: "https://steamcommunity-a.akamaihd.net/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyLwiYbf_jdk7uW-V6V-Kf2cGFiYxO9gqa9sSS_mwR4h4D6Az9ardyqQa1NyDpIkTOBb5ES7wYDiMOyz4lPf2YsX02yg2Ubsh123/256fx256f", obtained: false }
         ];
 
         const skinsCS16 = [
-            { name: "Knife | Blue Steel", price: 120, discount: "-15%", wear: "FN", rarity: "#4b69ff", img: "https://steamcommunity-a.akamaihd.net/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXU5A1PIYQh5hlcX0nvUOGsx8DdQBJjIAVHubSaKlhj1P_NczRD4860zY6JlvL3Z7-FwjkBvJZy2L-R99Sj2Vbg-0RrY2r0I9SccVBoMAmFqFm_wb-5gMXVu5_KySFm7ygh4XfbnEe0h0gfabMv16GACQLJFyk97FfW" }
+            { id: 10, name: "Knife | Blue Steel", price: 120, discount: "-15%", wear: "FN", rarity: "#4b69ff", img: "https://steamcommunity-a.akamaihd.net/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXU5A1PIYQh5hlcX0nvUOGsx8DdQBJjIAVHubSaKlhj1P_NczRD4860zY6JlvL3Z7-FwjkBvJZy2L-R99Sj2Vbg-0RrY2r0I9SccVBoMAmFqFm_wb-5gMXVu5_KySFm7ygh4XfbnEe0h0gfabMv16GACQLJFyk97FfW", obtained: false }
         ];
 
-        function handlePurchase(itemName) {
-            if (!isLoggedIn) { showPage('login'); } 
-            else { alert(`¡Has comprado ${itemName}!`); }
+        let selectedItem = null;
+
+        function animateBalanceReduction(targetValue) {
+            const balanceEl = document.getElementById('balance-val');
+            const startValue = balance;
+            const duration = 2000; 
+            const startTime = performance.now();
+            
+            balanceEl.classList.add('balance-changing');
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+                const currentValue = startValue - (startValue - targetValue) * easeOutCubic;
+                
+                balanceEl.innerText = `$${currentValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    balance = targetValue;
+                    balanceEl.innerText = `$${balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                    balanceEl.classList.remove('balance-changing');
+                }
+            }
+            requestAnimationFrame(update);
+        }
+
+        function openModal(item) {
+            if(item.obtained) return;
+            if (!isLoggedIn) { showPage('login'); return; }
+            
+            selectedItem = item;
+            document.getElementById('modal-img').src = item.img;
+            document.getElementById('modal-name').innerText = item.name;
+            document.getElementById('modal-price').innerText = `$${item.price.toLocaleString()}`;
+            document.getElementById('modal-wear').innerText = item.wear;
+            document.getElementById('modal-rarity-bg').style.background = `radial-gradient(circle, ${item.rarity} 0%, transparent 80%)`;
+            document.getElementById('modal-error').classList.add('hidden');
+            
+            const rarityText = document.getElementById('modal-rarity-text');
+            const rarityType = document.getElementById('modal-rarity-type');
+            
+            const isContraband = item.rarity === '#e4ae39';
+            rarityText.innerText = isContraband ? 'CONTRABANDO' : 'ENCUBIERTO';
+            rarityType.innerText = isContraband ? 'S-Tier' : 'Mythical';
+            rarityText.style.color = item.rarity;
+
+            document.getElementById('modal-confirm-btn').onclick = confirmPurchase;
+            
+            const modal = document.getElementById('detail-modal');
+            modal.classList.remove('hidden');
+            void modal.offsetWidth; // Force reflow
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('detail-modal');
+            modal.classList.remove('flex');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                selectedItem = null;
+            }, 400); // Wait for transition
+        }
+
+        function confirmPurchase() {
+            if (!selectedItem) return;
+
+            if (balance < selectedItem.price) {
+                const errorEl = document.getElementById('modal-error');
+                errorEl.classList.remove('hidden');
+                errorEl.animate([
+                    { transform: 'translateX(-5px)' }, { transform: 'translateX(5px)' }, { transform: 'translateX(-5px)' }, { transform: 'translateX(0)' }
+                ], { duration: 200 });
+                return;
+            }
+
+            const nuevoSaldo = balance - selectedItem.price;
+            animateBalanceReduction(nuevoSaldo);
+
+            selectedItem.obtained = true;
+            
+            confetti({
+                particleCount: 200,
+                spread: 100,
+                origin: { y: 0.6 },
+                colors: [selectedItem.rarity, '#ffffff', '#6366f1']
+            });
+
+            closeModal();
+            renderAll();
         }
 
         function createCard(item) {
+            const isObtained = item.obtained;
             return `
-                <div class="skin-card group">
+                <div class="skin-card group ${isObtained ? 'obtained' : ''}" 
+                     onclick="${isObtained ? '' : `openModal(${JSON.stringify(item).replace(/"/g, '&quot;')})`}">
                     <div class="flex justify-between items-start mb-1">
                         <span class="wear-label">${item.wear}</span>
-                        <div class="discount-badge">${item.discount}</div>
+                        ${isObtained ? '<span class="text-[9px] font-black text-indigo-400 bg-indigo-500/10 px-2 rounded tracking-tighter">ADQUIRIDO</span>' : `<div class="discount-badge">${item.discount}</div>`}
                     </div>
                     <div class="h-20 flex items-center justify-center mb-2">
-                        <img src="${item.img}" class="max-h-full max-w-[80%] group-hover:scale-110 transition-transform duration-300" onerror="this.src='https://via.placeholder.com/150?text=Skin'">
+                        <img src="${item.img}" class="max-h-full max-w-[80%] ${isObtained ? '' : 'group-hover:scale-125'} transition-all duration-500" onerror="this.src='https://via.placeholder.com/150?text=Skin'">
                     </div>
                     <div class="mt-auto card-info-content">
                         <p class="text-[10px] font-bold text-muted uppercase truncate mb-1">${item.name}</p>
                         <div class="flex items-center justify-between">
-                            <span class="text-sm font-black text-white">$${item.price.toLocaleString()}</span>
-                            <div class="w-2 h-2 rounded-full" style="background: ${item.rarity}"></div>
+                            <span class="text-xs font-black text-white">${isObtained ? 'EN INVENTARIO' : `$${item.price.toLocaleString()}`}</span>
+                            <div class="w-1.5 h-1.5 rounded-full" style="background: ${item.rarity}"></div>
                         </div>
                     </div>
-                    <button onclick="handlePurchase('${item.name}')" class="btn-buy-card">
-                        Comprar
-                    </button>
+                    ${!isObtained ? `<button class="btn-buy-card">Ver detalles</button>` : ''}
                     <div class="skin-rarity-bar" style="background: ${item.rarity}"></div>
                 </div>
             `;
         }
 
         function renderAll() {
-            const gridGO = document.getElementById('grid-csgo');
-            const grid16 = document.getElementById('grid-cs16');
-            gridGO.innerHTML = skinsCSGO.map(s => createCard(s)).join('');
-            grid16.innerHTML = skinsCS16.map(s => createCard(s)).join('');
+            document.getElementById('grid-csgo').innerHTML = skinsCSGO.map(s => createCard(s)).join('');
+            document.getElementById('grid-cs16').innerHTML = skinsCS16.map(s => createCard(s)).join('');
         }
 
         function showPage(target) {
@@ -388,7 +643,7 @@
                     next.classList.add('enter-right');
                     void next.offsetWidth;
                     next.classList.remove('enter-right');
-                }, 300);
+                }, 400);
             } else { next.classList.remove('hidden-section'); }
         }
 
@@ -401,17 +656,20 @@
             const errorMsg = document.getElementById('login-error');
             if (users[userInput] && users[userInput] === passInput) {
                 isLoggedIn = true;
-                errorMsg.classList.add('hidden');
                 document.getElementById('login-btn').classList.add('hidden');
                 document.getElementById('user-info').classList.remove('hidden');
                 document.getElementById('user-display-name').innerText = userInput;
-                document.getElementById('balance-val').innerText = `$${balance.toLocaleString()}`;
+                document.getElementById('user-avatar-img').src = defaultAvatar;
+                document.getElementById('balance-val').innerText = `$${balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
                 showPage('store');
-                confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#6366f1', '#ffffff', '#ffd700'] });
-            } else { errorMsg.classList.remove('hidden'); }
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            } else { 
+                errorMsg.classList.remove('hidden'); 
+            }
         }
 
         window.onload = renderAll;
     </script>
 </body>
 </html>
+
